@@ -1,0 +1,12 @@
+# IDEA
+.idea
+*.iml
+
+#Maven
+target
+*.log
+/.project
+application.properties
+
+#Custom
+run.sh
