@@ -2,11 +2,8 @@
 .idea
 *.iml
 
-#Maven
+# Maven
 target
 *.log
 /.project
 application.properties
-
-#Custom
-run.sh
