@@ -10,7 +10,7 @@ angular.module('navigatorApp', ['ngRoute'])
         $http.get('/cities/all').
             success(function (data) {
                 $scope.cities = [];
-                $.each(data, function(i, obj) {
+                $.each(data, function (i, obj) {
                     $scope.cities.push(obj['city']);
                 });
                 $scope.cities.sort();
@@ -22,48 +22,38 @@ angular.module('navigatorApp', ['ngRoute'])
                 alert('не смог скачать города');
             });
 
-        $scope.setCurCity = function(city) {
+        $scope.setCurCity = function (city) {
             $scope.curCity = city;
-        }
-    }])
-    .controller('museumCtrl', ['$scope', '$http', function ($scope, $http) {
-        $scope.museumCount = 0;
-        $http.get('/museum/count?city=' + $scope.curCity).
-            success(function (data) {
-                $scope.museumCount = data;
-            }).
-            error(function () {
-                alert('не смог узнать количество музеев');
-            });
+        };
 
-        $scope.museumList = [];
-        $scope.indexFrom = 0;
-        $scope.indexTo = 9;
-        $scope.tryGetMuseums = function () {
-            $http.get('museum/indexes?city=' + $scope.curCity + '&from=' + $scope.indexFrom + '&to=' + $scope.indexTo).
-                success(function (data) {
-                    $scope.museumList = [];
-                    $.each(data, function (i, obj) {
-                        $scope.museumList.push(obj);
-                    });
-                }).
-                error(function () {
-                    alert('не смог скачать музеи');
-                });
-        }
-        $scope.tryGetMuseums();
-    }])
-    .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-        //$locationProvider.html5Mode(true);
-        $routeProvider
-            .when('/', {
-                template: 'dcdcdcdcdcdcdddccdcdddcd'
-            })
-            .when('/museums', {
-                templateUrl: '/application/tmpl/museums_view.html',
-                controller: 'museumCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
+        $scope._views = ['home', 'museums'];
+        $scope.curView = 'home';
+        $scope.setHomeView = function () {
+            $scope.curView = 'home';
+        };
+        $scope.isHomeView = function () {
+            return $scope.curView == 'home';
+        };
+        $scope.setMuseumView = function () {
+            debugger;
+            $scope.curView = 'museums';
+        };
+        $scope.isMuseumsView = function () {
+            return $scope.curView == 'museums';
+        };
+
     }]);
+/*.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+ //$locationProvider.html5Mode(true);
+ $routeProvider
+ .when('/', {
+ template: 'ttttttttttttttt'
+ })
+ .when('/museums', {
+ templateUrl: '/application/tmpl/museums_view.html',
+ controller: 'museumCtrl'
+ })
+ .otherwise({
+ redirectTo: '/'
+ });
+ }]);         */

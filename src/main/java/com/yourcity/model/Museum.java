@@ -59,12 +59,12 @@ public class Museum extends Model {
         return getInteger("city_id");
     }
 
-    public void setImage(byte[] image) {
-        set("image", image);
+    public void setImage(String image) {
+        setString("image", image);
     }
 
-    public byte[] getImage() {
-        return getBytes("image");
+    public String getImage() {
+        return getString("image");
     }
 
 }

@@ -19,6 +19,7 @@
         <dbUrl>jdbc:h2:tcp://localhost/~/your-city</dbUrl>
         <dbUser>YourCityApp</dbUser>
         <dbPassword>qwerty12appyc</dbPassword>
+        <imageDirPath>${project.basedir}/your-city-images</imageDirPath>
     </properties>
 
     <dependencies>
@@ -154,7 +155,7 @@
                             <goal>write-project-properties</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${project.basedir}/src/main/resources/application.properties</outputFile>
+                            <outputFile>${project.basedir}/src/main/resources/application.properties </outputFile>
                         </configuration>
                     </execution>
                 </executions>

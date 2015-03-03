@@ -1,14 +1,24 @@
-
-    <div class="row" ng-repeat="museum in museumList">
-        <div class="col-sm-6 col-md-4">
+<!--div class="row">
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">search</button>
+            </span>
+        </div>
+    </div>
+</div-->
+<div style="margin-left: 10%; margin-right: 10%; margin-bottom: 10%; margin-top: 5%;">
+    <div class="row">
+        <div class="col-xs-6 col-md-4" ng-repeat="museum in museumList">
             <div class="thumbnail">
-                <img ng-src="{{museum.image}}">
+                <img ng-src="{{museum.image}}" alt="loading...">
 
                 <div class="caption">
                     <h3>{{museum.name}}</h3>
 
                     <p>{{museum.description}}</p>
-                    ssssssssssssssssssssss
+
                     <p>
                         <a href="#" class="btn btn-primary" role="button">Look</a>
                         <a href="#" class="btn btn-default" role="button">Open images</a>
@@ -17,3 +27,4 @@
             </div>
         </div>
     </div>
+</div>

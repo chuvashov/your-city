@@ -42,9 +42,9 @@ public class DatabaseProvider implements ContainerRequestFilter {
             DB_USER = properties.getProperty("dbUser");
             DB_PASSWORD = properties.getProperty("dbPassword");
 
-            LOGGER.info("Read properties from file. Starting database with url=" + DB_URL);
+            LOGGER.info("Read properties from file. Starting database with url = " + DB_URL);
         } catch (Exception e) {
-            LOGGER.error("Failed to start database", e);
+            LOGGER.error("Failed to start database. " + e.getMessage(), e);
         }
         openConnection();
         LOGGER.info("Database connection is opened.");
