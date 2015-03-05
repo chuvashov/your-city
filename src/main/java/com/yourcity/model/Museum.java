@@ -67,4 +67,16 @@ public class Museum extends Model {
         return getString("image");
     }
 
+    public void setAbout(String about) {
+        setString("about", about);
+    }
+
+    public String getAbout() {
+        String about = getString("about");
+        if (about == null) {
+            about = "";
+        }
+        return about;
+    }
+
 }

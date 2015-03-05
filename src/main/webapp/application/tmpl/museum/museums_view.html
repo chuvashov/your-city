@@ -1,0 +1,30 @@
+<!--div class="row">
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">search</button>
+            </span>
+        </div>
+    </div>
+</div-->
+<div class="row" style="margin-left: 10%; margin-right: 10%; margin-bottom: 10%; margin-top: 5%;">
+    <div ng-show="noMuseumsMessage" class="alert alert-info">No images</div>
+    <div ng-show="loading" class="alert alert-warning">Loading...</div>
+    <div class="col-xs-6 col-md-4" ng-repeat="museum in museumList">
+        <div class="thumbnail">
+            <img ng-src="{{museum.image}}" alt="loading...">
+
+            <div class="caption">
+                <h3>{{museum.name}}</h3>
+
+                <p>{{museum.description}}</p>
+
+                <p>
+                    <a href="#museums/view/{{museum.id}}" class="btn btn-primary" role="button">View</a>
+                    <a href="#museums/images/{{museum.id}}" class="btn btn-default" role="button">Show images</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
