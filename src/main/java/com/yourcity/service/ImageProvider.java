@@ -1,16 +1,12 @@
 package com.yourcity.service;
 
-import org.apache.commons.codec.binary.Base64;
+import com.yourcity.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -23,10 +19,18 @@ public class ImageProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProvider.class);
 
     private static String IMAGE_DIR_PATH;
+    private static final String ROOT_DIR = "your-city-images";
+    private static final String WEBAPP_PREFIX = "src/main/webapp/";
+    private static final String BASE64_PREFIX = "data:image/png;base64,";
+
+    //paths
     private static final String MUSEUM_AVATAR_DIR = "/museum/avatars/";
     private static final String MUSEUM_IMAGES_DIR = "/museum/images/";
-
     private static List<String> paths = Arrays.asList(MUSEUM_AVATAR_DIR, MUSEUM_IMAGES_DIR);
+
+    //defaults
+    private static final String DEFAULT_MUSEUM_AVATAR = "application/images/default_museum_avatar.png";
+
 
     static {
         Properties properties = new Properties();
@@ -57,6 +61,21 @@ public class ImageProvider {
         LOGGER.info("ImageProvider is opened.");
     }
 
+    public static String getMuseumAvatarBase64Url(String img) {
+        if (isMuseumAvatarImage(img)) {
+            return BASE64_PREFIX + ImageUtil.getBase64Image(ROOT_DIR + MUSEUM_AVATAR_DIR + img);
+        }
+        return BASE64_PREFIX + ImageUtil.getBase64Image(WEBAPP_PREFIX + DEFAULT_MUSEUM_AVATAR);
+    }
+
+    public static String getMuseumImageBase64Url(String img) {
+        String url = "";
+        if (isMuseumImage(img)) {
+            url = BASE64_PREFIX + ImageUtil.getBase64Image(ROOT_DIR + MUSEUM_IMAGES_DIR + img);
+        }
+        return url;
+    }
+
     public static boolean isMuseumAvatarImage(String imgName) {
         File imgFile = new File(IMAGE_DIR_PATH + MUSEUM_AVATAR_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
@@ -67,20 +86,5 @@ public class ImageProvider {
         return imgFile.exists() && imgFile.isFile();
     }
 
-    public static String getBase64Image(String imgPath) {
-        Path path = Paths.get(imgPath);
-        byte[] img = null;
-        try {
-            img = Files.readAllBytes(path);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        String result = "";
-        try {
-            result = new String(Base64.encodeBase64(img), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return result;
-    }
+
 }

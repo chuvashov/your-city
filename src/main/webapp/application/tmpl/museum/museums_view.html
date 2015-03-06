@@ -9,8 +9,8 @@
     </div>
 </div-->
 <div class="row" style="margin-left: 10%; margin-right: 10%; margin-bottom: 10%; margin-top: 5%;">
-    <div ng-show="noMuseumsMessage" class="alert alert-info">No images</div>
-    <div ng-show="loading" class="alert alert-warning">Loading...</div>
+    <div ng-show="noMuseumsMessage" class="alert alert-warning">No museums</div>
+    <div ng-show="loading" class="alert alert-info">Loading...</div>
     <div class="col-xs-6 col-md-4" ng-repeat="museum in museumList">
         <div class="thumbnail">
             <img ng-src="{{museum.image}}" alt="loading...">

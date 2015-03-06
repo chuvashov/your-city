@@ -1,8 +1,6 @@
 package com.yourcity.service;
 
-import com.yourcity.model.City;
 import org.javalite.activejdbc.Base;
-import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +9,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -53,23 +50,6 @@ public class DatabaseProvider implements ContainerRequestFilter {
     private static void openConnection() {
         if (!Base.hasConnection()) {
             Base.open(DB_DRIVER, DB_URL, DB_USER, DB_PASSWORD);
-        }
-    }
-
-    private static ArrayList<City> cities = null;
-
-    public static ArrayList<City> getCities() {
-        if (cities == null || cities.isEmpty()) {
-            refreshCities();
-        }
-        return cities;
-    }
-
-    public static void refreshCities() {
-        cities = new ArrayList<>();
-        LazyList<City> list = City.findAll();
-        for (City city : list) {
-            cities.add(city);
         }
     }
 

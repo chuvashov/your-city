@@ -3,7 +3,7 @@ package com.yourcity.resource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.yourcity.model.City;
-import com.yourcity.service.DatabaseProvider;
+import com.yourcity.util.CityUtil;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +22,7 @@ public class CityResource {
     @Produces("application/json")
     public Response getCitiesAsJson() {
         JsonArray jsonArray = new JsonArray();
-        ArrayList<City> cities = DatabaseProvider.getCities();
+        ArrayList<City> cities = CityUtil.getCities();
         JsonObject jsonObj;
         for (City city : cities) {
             jsonObj = new JsonObject();

@@ -5,15 +5,14 @@ import com.google.gson.JsonObject;
 import com.yourcity.model.City;
 import com.yourcity.model.Museum;
 import com.yourcity.model.MuseumImage;
-import com.yourcity.service.DatabaseProvider;
 import com.yourcity.service.ImageProvider;
+import com.yourcity.util.CityUtil;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,13 +21,6 @@ import java.util.List;
 @Path("/museum")
 @Produces("application/json")
 public class MuseumResource {
-
-    private static final String DEFAULT_MUSEUM_AVATAR = "application/images/default_museum_avatar.png";
-    private static final String MUSEUM_AVATAR_DIR = "your-city-images/museum/avatars/";
-    private static final String MUSEUM_IMAGES_DIR = "your-city-images/museum/images/";
-
-    private static final String WEBAPP_PREFIX = "src/main/webapp/";
-    private static final String BASE64_PREFIX = "data:image/png;base64,";
 
     @GET
     @Path("/info/byId")
@@ -53,21 +45,19 @@ public class MuseumResource {
 
     @GET
     @Path("/all")
-    public Response getMuseumsByIndexes(@QueryParam("city") String city) {
-        ArrayList<City> cities = DatabaseProvider.getCities();
-        int cityIndex = indexOfCity(cities, city);
-        if (cityIndex == -1) {
+    public Response getMuseumsByIndexes(@QueryParam("city") String cityName) {
+        City city = CityUtil.getCityByName(cityName);
+        if (city == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        Integer cityId = cities.get(cityIndex).getCityId();
-        List<Museum> museums = Museum.where("city_id = ?", cityId);
+        List<Museum> museums = Museum.where("city_id = ?", city.getCityId());
         JsonArray array = new JsonArray();
         JsonObject jsonObj;
         for (Museum museum : museums) {
             jsonObj = new JsonObject();
             jsonObj.addProperty("name", museum.getName());
             jsonObj.addProperty("description", museum.getDescription());
-            jsonObj.addProperty("image", getActiveAvatarUrl(museum.getImage()));
+            jsonObj.addProperty("image", ImageProvider.getMuseumAvatarBase64Url(museum.getImage()));
             jsonObj.addProperty("id", museum.getMuseumId());
             array.add(jsonObj);
         }
@@ -76,22 +66,13 @@ public class MuseumResource {
 
     @GET
     @Path("/count")
-    public Response getCount(@QueryParam("city") String city) {
-        ArrayList<City> cities = DatabaseProvider.getCities();
-        int cityIndex = indexOfCity(cities, city);
-        if (cityIndex == -1) {
+    public Response getCount(@QueryParam("city") String cityName) {
+        City city = CityUtil.getCityByName(cityName);
+        if (city == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        Integer cityId = cities.get(cityIndex).getCityId();
-        Long count = Museum.count("city_id = " + cityId);
+        Long count = Museum.count("city_id = " + city.getCityId());
         return Response.ok(count.toString()).build();
-    }
-
-    private String getActiveAvatarUrl(String img) {
-        if (!ImageProvider.isMuseumAvatarImage(img)) {
-            return BASE64_PREFIX + ImageProvider.getBase64Image(WEBAPP_PREFIX + DEFAULT_MUSEUM_AVATAR);
-        }
-        return BASE64_PREFIX + ImageProvider.getBase64Image(MUSEUM_AVATAR_DIR + img);
     }
 
     @GET
@@ -112,7 +93,7 @@ public class MuseumResource {
         jsonObj.addProperty("phone", museum.getPhone());
         jsonObj.addProperty("address", museum.getAddress());
         jsonObj.addProperty("about", museum.getAbout());
-        jsonObj.addProperty("image", getActiveAvatarUrl(museum.getImage()));
+        jsonObj.addProperty("image", ImageProvider.getMuseumAvatarBase64Url(museum.getImage()));
         return Response.ok(jsonObj.toString()).build();
     }
 
@@ -135,22 +116,11 @@ public class MuseumResource {
             }
             jsonObj = new JsonObject();
             jsonObj.addProperty("description", image.getDescription());
-            jsonObj.addProperty("src", BASE64_PREFIX + ImageProvider.getBase64Image(MUSEUM_IMAGES_DIR + src));
+            jsonObj.addProperty("src", ImageProvider.getMuseumImageBase64Url(src));
             array.add(jsonObj);
         }
         return Response.ok(array.toString()).build();
     }
 
-    private int indexOfCity(List<City> cities, String cityName) {
-        if (!cities.isEmpty()) {
-            City city;
-            for (int i = 0; i < cities.size(); i++) {
-                city = cities.get(i);
-                if (city.getCityName().equals(cityName)) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
+
 }

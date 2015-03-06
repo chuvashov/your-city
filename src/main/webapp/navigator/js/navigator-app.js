@@ -2,7 +2,7 @@
  * Created by Andrey on 22.02.2015.
  */
 angular.module('navigatorApp', ['ngRoute'])
-    .controller('navigatorCtrl', ['$scope', '$http', function ($scope, $http) {
+    .controller('navigatorCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
 
         $scope.cities = [];
         $scope.curCity = 'Choose city';
@@ -20,14 +20,22 @@ angular.module('navigatorApp', ['ngRoute'])
                 }
             }).
             error(function () {
-                alert('не смог скачать города');
                 $scope.curCity = $scope._defaultCity;
                 $scope.cities = [];
                 $scope.cities.push($scope._defaultCity);
             });
 
         $scope.setCurCity = function (city) {
+            if (city == $scope.curCity) {
+                return;
+            }
             $scope.curCity = city;
+            var path = $location.path();
+            if (path.substring(0, 9) == '/museums/') {
+                $location.path('/museums');
+            } else {
+                //other
+            }
         };
 
     }])
@@ -36,26 +44,27 @@ angular.module('navigatorApp', ['ngRoute'])
         $scope.loading = null;
         $scope.noMuseumsMessage = false;
         $scope.tryToGetMuseums = function () {
+            $scope.loading = true;
             $http.get('museum/all?city=' + $scope.curCity)
                 .success(function (data) {
                     $scope.museumList = [];
                     $.each(data, function (i, obj) {
                         $scope.museumList.push(obj);
-                        $scope.loading = false;
                     });
+                    $scope.loading = false;
                 })
                 .error(function () {
                     $scope.loading = false;
                     $scope.noMuseumsMessage = true;
                 });
         };
-        $scope.loading = true;
         $scope.tryToGetMuseums();
     }])
     .controller('museumViewCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
         $scope.museum = {};
         $scope.loading = null;
         $scope.tryToGetMuseumInfo = function () {
+            $scope.loading = true;
             $http.get('/museum/view?id=' + $routeParams.museumId)
                 .success(function (data) {
                     $scope.museum = data;
@@ -66,7 +75,6 @@ angular.module('navigatorApp', ['ngRoute'])
                     $scope.loading = false;
                 });
         };
-        $scope.loading = true;
         $scope.tryToGetMuseumInfo();
     }])
     .controller('museumImagesViewCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
@@ -79,6 +87,7 @@ angular.module('navigatorApp', ['ngRoute'])
                 $scope.museumName = data.name;
             });
         $scope.tryToGetImages = function () {
+            $scope.loading = true;
             $http.get('/museum/images?id=' + $routeParams.museumId)
                 .success(function (data) {
                     $scope.images = [];
@@ -92,7 +101,6 @@ angular.module('navigatorApp', ['ngRoute'])
                     $scope.loading = false;
                 });
         };
-        $scope.loading = true;
         $scope.tryToGetImages();
     }])
     .config(['$routeProvider', function ($routeProvider) {

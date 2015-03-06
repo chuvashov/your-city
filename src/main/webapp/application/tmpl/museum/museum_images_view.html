@@ -3,8 +3,8 @@
         <h3>{{museumName}} <small> Images </small></h3>
     </div>
     <div class="row">
-        <div ng-show="noImagesMessage" class="alert alert-info">No images</div>
-        <div ng-show="loading" class="alert alert-warning">Loading...</div>
+        <div ng-show="noImagesMessage" class="alert alert-warning">No images</div>
+        <div ng-show="loading" class="alert alert-info">Loading...</div>
         <div class="col-xs-6 col-md-4" ng-repeat="img in images">
             <div class="thumbnail">
                 <img ng-src="{{img.src}}" alt="loading...">
