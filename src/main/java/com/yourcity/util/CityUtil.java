@@ -40,4 +40,16 @@ public class CityUtil {
         }
         return null;
     }
+
+    public static boolean existCityId(int id) {
+        if (cities == null) {
+            refreshCities();
+        }
+        for (City city : cities) {
+            if (city.getCityId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

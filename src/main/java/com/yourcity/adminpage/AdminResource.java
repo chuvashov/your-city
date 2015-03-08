@@ -19,7 +19,7 @@ public class AdminResource {
 
     @GET
     public InputStream showIndexPage() {
-        File index = new File("src/main/webapp/adminpage.html");
+        File index = new File("src/main/webapp/admin-page.html");
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(index);

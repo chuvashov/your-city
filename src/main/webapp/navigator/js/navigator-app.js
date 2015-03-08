@@ -1,12 +1,15 @@
 /**
  * Created by Andrey on 22.02.2015.
  */
-angular.module('navigatorApp', ['ngRoute'])
-    .controller('navigatorCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+angular.module('navigatorApp', ['ngRoute', 'ngCookies'])
+    .controller('navigatorCtrl', ['$scope', '$http', '$location', '$cookies', function ($scope, $http, $location, $cookies) {
 
         $scope.cities = [];
-        $scope.curCity = 'Choose city';
-        $scope._defaultCity = 'Moscow';
+        $scope.curCity = $cookies.city ? $cookies.city : 'Choose city';
+        $scope.saveCurCity = function (city) {
+            debugger;
+            $cookies.city = city;
+        };
 
         $http.get('/cities/all').
             success(function (data) {
@@ -15,14 +18,12 @@ angular.module('navigatorApp', ['ngRoute'])
                     $scope.cities.push(obj['city']);
                 });
                 $scope.cities.sort();
-                if ($scope.cities.length) {
+                if ($scope.cities.length && $scope.curCity == 'Choose city') {
                     $scope.curCity = $scope.cities[0];
                 }
             }).
             error(function () {
-                $scope.curCity = $scope._defaultCity;
                 $scope.cities = [];
-                $scope.cities.push($scope._defaultCity);
             });
 
         $scope.setCurCity = function (city) {
@@ -30,9 +31,10 @@ angular.module('navigatorApp', ['ngRoute'])
                 return;
             }
             $scope.curCity = city;
+            $scope.saveCurCity(city);
             var path = $location.path();
-            if (path.substring(0, 9) == '/museums/') {
-                $location.path('/museums');
+            if (path.substring(0, 9) == '/museums') {
+                $location.path('museums');
             } else {
                 //other
             }
@@ -105,6 +107,9 @@ angular.module('navigatorApp', ['ngRoute'])
     }])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
+            .when('', {
+                template: 'home page'
+            })
             .when('/', {
                 template: 'home page'
             })
@@ -121,6 +126,6 @@ angular.module('navigatorApp', ['ngRoute'])
                 controller: 'museumImagesViewCtrl'
             })
             .otherwise({
-                redirectTo: '/'
+                redirectTo: ''
             });
     }]);

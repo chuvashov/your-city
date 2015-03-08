@@ -11,7 +11,7 @@
         </init-param>
         <init-param>
             <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
-            <param-value>/(lib|application|navigator)/.*</param-value>
+            <param-value>/(lib|application|navigator|admin)/.*</param-value>
         </init-param>
     </filter>
 
@@ -20,5 +20,13 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
+        <param-value>YOURCITYSESSIONID</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionIdPathParameterName</param-name>
+        <param-value>yourcitysessionid</param-value>
+    </context-param>
 
 </web-app>

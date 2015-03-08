@@ -86,5 +86,7 @@ public class ImageProvider {
         return imgFile.exists() && imgFile.isFile();
     }
 
-
+    public static String saveAvatarBase64ImageAndGetName(String base64Image) {
+        return ImageUtil.saveBase64AvatarImageAndGetName(base64Image, ROOT_DIR + MUSEUM_AVATAR_DIR);
+    }
 }
