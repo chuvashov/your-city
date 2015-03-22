@@ -1,10 +1,99 @@
-<div style="margin-top: 3%; margin-right: 5%; margin-left: 5%; margin-bottom: 3%">
-    <div class="row">
-        <div class="col-md-8">
-
+<div class="view-content">
+    <form name="form" novalidate enctype="multipart/form-data">
+        <div class="row">
+            <div ng-show="errored" class="alert alert-danger">Error: cannot create</div>
+            <div ng-show="created" class="alert alert-success">Created</div>
+            <div class="btn-group item-offset" style="margin-left: 1%">
+                <button type="submit" class="btn btn-success" ng-disabled="form.$invalid || progressBar" ng-click="save(form.museumImage.files)">Create</button>
+                <button type="button" class="btn btn-default" ng-click="clear()">Clear</button>
+                <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+                <img ng-if="progressBar" style="width: 30px; height: 30px; margin-left: 10px;" ng-src="{{waitProgress}}"/>
+            </div>
         </div>
-        <div class="col-sm-4">
-            <img style="border: 1px solid gray;" ng-src="{{museum.image}}" alt="loading...">
+        <div class="item-offset"></div>
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Name -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text" name="museumName" required ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/"
+                           class="form-control" ng-model="museum.name">
+                </div>
+                <div ng-show="form.museumName.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div ng-show="form.museumName.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- City -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">City</span>
+                    <select class="form-control" ng-model="museum.city">
+                        <option ng-repeat="city in cityList">{{city}}</option>
+                    </select>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Address -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Address</span>
+                    <input type="text" name="museumAddress" ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/" required
+                           class="form-control" ng-model="museum.address">
+                </div>
+                <div ng-show="form.museumAddress.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div ng-show="form.museumAddress.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Email -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Email</span>
+                    <input type="email" name="museumEmail" class="form-control" ng-model="museum.email">
+                </div>
+                <div ng-show="form.museumEmail.$error.email">
+                    <span class="error-message">Incorrect email</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Phone -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Phone</span>
+                    <input type="text" name="museumPhone" class="form-control" ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/" ng-model="museum.phone">
+                </div>
+                <div ng-show="form.museumPhone.$error.pattern">
+                    <span class="error-message">Incorrect phone</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Description -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Description</span>
+                    <input type="text" name="museumDescription" class="form-control" ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/" ng-model="museum.description">
+                </div>
+                <div ng-show="form.museumDescription.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- About -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">About</span>
+                    <textarea type="text" name="museumAbout" class="form-control" ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/"
+                           required ng-model="museum.about" style="max-width: 100%;"></textarea>
+                </div>
+                <div ng-show="form.museumAbout.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div ng-show="form.museumAbout.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+            </div>
+            <!-- Image -->
+            <div class="col-md-4 col-xs-6">
+                <img id="image-view" ng-show="museum.image" style="border: 1px solid #cccccc; max-width: 100%;" ng-src="{{museum.image}}">
+                <div class="item-offset"></div>
+                <button type="button" ng-show="imageChanged" class="btn btn-danger item-offset" ng-click="removeImage()">Remove image</button>
+                <input type="file" name="museumImage" class="btn btn-primary" onchange="angular.element(this).scope().uploadImage(this.files)" accept="image/jpeg, image/png">
+            </div>
         </div>
-    </div>
+    </form>
 </div>

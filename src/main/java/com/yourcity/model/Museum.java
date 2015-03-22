@@ -2,6 +2,9 @@ package com.yourcity.model;
 
 import org.javalite.activejdbc.Model;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by Andrey on 22.02.2015.
  */
@@ -11,7 +14,7 @@ public class Museum extends Model {
         return getInteger("id");
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         setString("name", name);
     }
 
@@ -19,7 +22,7 @@ public class Museum extends Model {
         return getString("name");
     }
 
-    public void setAddress(String address) {
+    public void setAddress(@NotNull String address) {
         setString("address", address);
     }
 
@@ -51,7 +54,7 @@ public class Museum extends Model {
         return getString("description");
     }
 
-    public void setCityId(Integer id) {
+    public void setCityId(@NotNull @Min(0) Integer id) {
         setInteger("city_id", id);
     }
 
@@ -67,16 +70,12 @@ public class Museum extends Model {
         return getString("image");
     }
 
-    public void setAbout(String about) {
+    public void setAbout(@NotNull String about) {
         setString("about", about);
     }
 
     public String getAbout() {
-        String about = getString("about");
-        if (about == null) {
-            about = "";
-        }
-        return about;
+        return getString("about");
     }
 
 }

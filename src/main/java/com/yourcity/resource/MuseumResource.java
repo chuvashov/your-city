@@ -57,7 +57,7 @@ public class MuseumResource {
             jsonObj = new JsonObject();
             jsonObj.addProperty("name", museum.getName());
             jsonObj.addProperty("description", museum.getDescription());
-            jsonObj.addProperty("image", ImageProvider.getMuseumAvatarBase64Url(museum.getImage()));
+            jsonObj.addProperty("image", ImageProvider.getMuseumAvatarUrl(museum.getImage()));
             jsonObj.addProperty("id", museum.getMuseumId());
             array.add(jsonObj);
         }
@@ -93,7 +93,7 @@ public class MuseumResource {
         jsonObj.addProperty("phone", museum.getPhone());
         jsonObj.addProperty("address", museum.getAddress());
         jsonObj.addProperty("about", museum.getAbout());
-        jsonObj.addProperty("image", ImageProvider.getMuseumAvatarBase64Url(museum.getImage()));
+        jsonObj.addProperty("image", ImageProvider.getMuseumAvatarUrl(museum.getImage()));
         return Response.ok(jsonObj.toString()).build();
     }
 
@@ -116,7 +116,7 @@ public class MuseumResource {
             }
             jsonObj = new JsonObject();
             jsonObj.addProperty("description", image.getDescription());
-            jsonObj.addProperty("src", ImageProvider.getMuseumImageBase64Url(src));
+            jsonObj.addProperty("src", ImageProvider.getMuseumImageUrl(src));
             array.add(jsonObj);
         }
         return Response.ok(array.toString()).build();

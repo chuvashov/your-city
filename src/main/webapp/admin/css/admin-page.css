@@ -1,0 +1,17 @@
+form .ng-invalid.ng-dirty {
+    background-color: #ffcccc;
+    border-color: #d43f3a;
+}
+
+form .error-message {
+    color: #d43f3a;
+    font-size: 11px;
+}
+
+.view-content {
+    margin: 3% 5%;
+}
+
+.item-offset {
+    margin-bottom: 10px;
+}

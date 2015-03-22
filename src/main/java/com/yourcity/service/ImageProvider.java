@@ -1,15 +1,11 @@
 package com.yourcity.service;
 
-import com.yourcity.util.ImageUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.util.UUID;
 
 /**
  * Created by Andrey on 01.03.2015.
@@ -18,75 +14,65 @@ public class ImageProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProvider.class);
 
-    private static String IMAGE_DIR_PATH;
-    private static final String ROOT_DIR = "your-city-images";
-    private static final String WEBAPP_PREFIX = "src/main/webapp/";
-    private static final String BASE64_PREFIX = "data:image/png;base64,";
-
     //paths
+    private static final String WEBAPP_DIR = "src/main/webapp";
+    private static final String IMAGES_DIR = "/your-city-images";
     private static final String MUSEUM_AVATAR_DIR = "/museum/avatars/";
     private static final String MUSEUM_IMAGES_DIR = "/museum/images/";
-    private static List<String> paths = Arrays.asList(MUSEUM_AVATAR_DIR, MUSEUM_IMAGES_DIR);
 
     //defaults
-    private static final String DEFAULT_MUSEUM_AVATAR = "application/images/default_museum_avatar.png";
+    private static final String DEFAULT_MUSEUM_AVATAR = "/application/images/default_museum_avatar.png";
 
-
-    static {
-        Properties properties = new Properties();
-
-        try (InputStream stream = DatabaseProvider.class.getResourceAsStream("/application.properties")) {
-            properties.load(stream);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        try {
-            IMAGE_DIR_PATH = properties.getProperty("imageDirPath");
-            LOGGER.info("ImageProvider read property from file.");
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        for (String path : paths) {
-            File file = new File(IMAGE_DIR_PATH + path);
-            if (!file.exists() && !file.isDirectory()) {
-                if (file.mkdirs()) {
-                    LOGGER.info("Directory " + path + " is created.");
-                } else {
-                    LOGGER.info("Dictionary " + path + " is not created!!!");
-                }
-            }
-        }
-        LOGGER.info("ImageProvider is opened.");
-    }
-
-    public static String getMuseumAvatarBase64Url(String img) {
+    public static String getMuseumAvatarUrl(String img) {
         if (isMuseumAvatarImage(img)) {
-            return BASE64_PREFIX + ImageUtil.getBase64Image(ROOT_DIR + MUSEUM_AVATAR_DIR + img);
+            return IMAGES_DIR + MUSEUM_AVATAR_DIR + img;
         }
-        return BASE64_PREFIX + ImageUtil.getBase64Image(WEBAPP_PREFIX + DEFAULT_MUSEUM_AVATAR);
+        return DEFAULT_MUSEUM_AVATAR;
     }
 
-    public static String getMuseumImageBase64Url(String img) {
+    public static String getMuseumImageUrl(String img) {
         String url = "";
         if (isMuseumImage(img)) {
-            url = BASE64_PREFIX + ImageUtil.getBase64Image(ROOT_DIR + MUSEUM_IMAGES_DIR + img);
+            url = IMAGES_DIR + MUSEUM_IMAGES_DIR + img;
         }
         return url;
     }
 
     public static boolean isMuseumAvatarImage(String imgName) {
-        File imgFile = new File(IMAGE_DIR_PATH + MUSEUM_AVATAR_DIR + imgName);
+        File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
     public static boolean isMuseumImage(String imgName) {
-        File imgFile = new File(IMAGE_DIR_PATH + MUSEUM_IMAGES_DIR + imgName);
+        File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
     public static String saveAvatarBase64ImageAndGetName(String base64Image) {
-        return ImageUtil.saveBase64AvatarImageAndGetName(base64Image, ROOT_DIR + MUSEUM_AVATAR_DIR);
+        return saveImageAndReturnName(base64Image, WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR);
+    }
+
+    private static String saveImageAndReturnName(String base64Image, String dir) {
+        if (!base64Image.startsWith("data:image/")) {
+            return null;
+        }
+        String format;
+        String image;
+        if (base64Image.charAt(11) == 'j') {
+            format = ".jpg";
+            image = base64Image.substring(23);
+        } else {
+            format = ".png";
+            image = base64Image.substring(22);
+        }
+        byte[] img = Base64.decodeBase64(image);
+        String name = UUID.randomUUID().toString() + format;
+        try (OutputStream stream = new FileOutputStream(dir + name)) {
+            stream.write(img);
+        } catch (IOException e) {
+            LOGGER.error("Can't save image: ", e);
+            name = null;
+        }
+        return name;
     }
 }

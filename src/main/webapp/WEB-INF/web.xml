@@ -11,7 +11,7 @@
         </init-param>
         <init-param>
             <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
-            <param-value>/(lib|application|navigator|admin)/.*</param-value>
+            <param-value>/(lib|application|navigator|admin|your-city-images)/.*</param-value>
         </init-param>
     </filter>
 

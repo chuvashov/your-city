@@ -21,33 +21,30 @@ public class AdminMuseumResource {
 
     @POST
     @Path("/museum/add")
-    public Response addNewMuseum(@QueryParam("name") String name, @QueryParam("description") String description
-            ,@QueryParam("email") String email, @QueryParam("about") String about, @QueryParam("phone") String phone
-            ,@QueryParam("address") String address, @QueryParam("cityId") Integer cityId
-            ,@QueryParam("image") String image) {
+    @Consumes("application/json")
+    public Response addNewMuseum(String imageBase64, @QueryParam("name") String name, @QueryParam("description") String description
+            , @QueryParam("email") String email, @QueryParam("about") String about, @QueryParam("phone") String phone
+            , @QueryParam("address") String address, @QueryParam("cityId") Integer cityId) {
         if (!isValidString(name) || !CityUtil.existCityId(cityId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         Museum museum = new Museum();
-        museum.setCityId(cityId);
-        museum.setName(name);
-        if (isValidString(description)) {
+        try {
+            museum.setCityId(cityId);
+            museum.setName(name);
             museum.setDescription(description);
-        }
-        if (isValidString(email)) {
             museum.setEmail(email);
-        }
-        if (isValidString(about)) {
             museum.setAbout(about);
-        }
-        if (isValidString(phone)) {
             museum.setPhone(phone);
-        }
-        if (isValidString(image)) {
-            String imageName = ImageProvider.saveAvatarBase64ImageAndGetName(image);
-            if (imageName != null) {
-                museum.setImage(imageName);
+            museum.setAddress(address);
+            if (isValidString(imageBase64)) {
+                String imageName = ImageProvider.saveAvatarBase64ImageAndGetName(imageBase64);
+                if (imageName != null) {
+                    museum.setImage(imageName);
+                }
             }
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
         if (museum.saveIt()) {
             return Response.status(Response.Status.CREATED).build();
@@ -62,7 +59,7 @@ public class AdminMuseumResource {
 
     @GET
     @Path("/museum")
-    public Response find(@QueryParam("id") Integer id, @QueryParam("name : []") String name
+    public Response find(@QueryParam("id") Integer id, @QueryParam("name") String name
             , @QueryParam("cityId") Integer cityId) {
         if (id != null) {
             return findById(id);
