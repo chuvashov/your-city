@@ -22,26 +22,41 @@ angular.module('adminApp', ['ngRoute'])
     .controller('museumCtrl', ['$scope', '$http', function ($scope, $http) {
         $scope.museumIdSearch = null;
         $scope.museumNameSearch = null;
-        $scope.cityIdSearch = null;
+        $scope.cityList = [];
+        var allCities = '-- ALL CITIES --';
+        $scope.citySearch = allCities;
+        var updateCities = function () {
+            $scope.citySearch = allCities;
+            $scope.cityList = [];
+            $scope.cityList.push(allCities);
+            $.each($scope.cities, function (j, city) {
+                $scope.cityList.push(city.name);
+            });
+        };
+        if ($scope.cities.length > 0) {
+            updateCities();
+        }
+        $scope.$on('citiesLoaded', function () {
+            updateCities();
+        });
 
         $scope.foundMuseums = [];
         $scope.notFound = false;
 
-        $scope.findMuseums = function () {
-            var requestParams = '';
-            if ($scope.museumIdSearch) {
-                requestParams = 'id=' + $scope.museumIdSearch;
-            } else if ($scope.museumNameSearch) {
-                requestParams = 'name=' + $scope.museumNameSearch;
-                if ($scope.cityIdSearch) {
-                    requestParams += '&cityId=' + $scope.cityIdSearch;
+        var getCityId = function(cityName) {
+            var id = null;
+            $.each($scope.cities, function(j, city) {
+                if (city.name == cityName) {
+                    id = city.id;
                 }
-            } else if ($scope.cityIdSearch) {
-                requestParams = 'cityId=' + $scope.cityIdSearch;
-            } else {
-                return;
-            }
-            $http.get('/rest/admin/museum?' + requestParams)
+            });
+            return id;
+        };
+
+        $scope.findByNameAndCity = function () {
+            var cityId = getCityId($scope.citySearch) || '',
+                name = $scope.museumNameSearch || '';
+            $http.get('/rest/admin/museum?cityId=' + cityId + '&name=' + name)
                 .success(function (data) {
                     $scope.foundMuseums = data;
                     $scope.notFound = false;
@@ -49,19 +64,28 @@ angular.module('adminApp', ['ngRoute'])
                 .error(function () {
                     $scope.notFound = true;
                 });
-            $scope.museumIdSearch = null;
-            $scope.museumNameSearch = null;
-            $scope.cityIdSearch = null;
+        };
+
+        $scope.findById = function () {
+            $http.get('/rest/admin/museum/id?id=' + $scope.museumIdSearch)
+                .success(function (data) {
+                    $scope.foundMuseums = data;
+                    $scope.notFound = false;
+                })
+                .error(function () {
+                    $scope.notFound = true;
+                });
         };
     }])
-    .controller('museumAddingCtrl', ['$scope', '$http', '$location', '$q', '$timeout',
-                function ($scope, $http, $location, $q, $timeout) {
+    .controller('museumAddingCtrl', ['$scope', '$http', '$location', '$timeout',
+                function ($scope, $http, $location, $timeout) {
         $scope.museum = {};
         $scope.museum.image = $scope.defaultMuseumAvatar;
         $scope.museum.city = '';
         $scope.cityList = [];
         var updateCities = function () {
             $scope.museum.city = $scope.cities[0].name;
+            $scope.cityList = [];
             $.each($scope.cities, function (j, city) {
                 $scope.cityList.push(city.name);
             });

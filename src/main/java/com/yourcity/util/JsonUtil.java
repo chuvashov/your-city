@@ -3,6 +3,7 @@ package com.yourcity.util;
 import com.google.gson.JsonObject;
 import com.yourcity.model.City;
 import com.yourcity.model.Museum;
+import com.yourcity.model.MuseumImage;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -27,6 +28,14 @@ public class JsonUtil {
         JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("name", city.getCityName());
         jsonObj.addProperty("id", city.getCityId());
+        return jsonObj;
+    }
+
+    public static JsonObject museumImageToJson(MuseumImage imageObject) {
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("description", imageObject.getDescription());
+        jsonObj.addProperty("src", imageObject.getSrc());
+        jsonObj.addProperty("museumId", imageObject.getMuseumImageId());
         return jsonObj;
     }
 }

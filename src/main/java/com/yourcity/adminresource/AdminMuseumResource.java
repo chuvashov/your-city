@@ -58,50 +58,52 @@ public class AdminMuseumResource {
     }
 
     @GET
-    @Path("/museum")
-    public Response find(@QueryParam("id") Integer id, @QueryParam("name") String name
-            , @QueryParam("cityId") Integer cityId) {
-        if (id != null) {
-            return findById(id);
-        }
-        if (name != null && !name.isEmpty() && cityId != null) {
-            return findByNameAndCityId(name, cityId);
-        }
-        if (name != null && !name.isEmpty()) {
-            return findByName(name);
-        }
-        if (cityId != null) {
-            return findByCityId(cityId);
+    @Path("/museum/id")
+    public Response findById(@QueryParam("id") Integer id) {
+        if (id != null && id > 0) {
+            Museum museum = Museum.findById(id);
+            if (museum == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            JsonArray array = new JsonArray();
+            array.add(JsonUtil.museumToJson(museum));
+            return Response.ok(array.toString()).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    private Response findById(Integer id) {
-        if (id < 0) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+    @GET
+    @Path("/museum")
+    public Response find(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name) {
+        Response response;
+        if (cityId != null && cityId > 0) {
+            if (isValidString(name)) {
+                response = findByNameAndCityId(name, cityId);
+            } else {
+                response = findByCityId(cityId);
+            }
+        } else if (isValidString(name)) {
+            response = findByName(name);
+        } else {
+            response = findAll();
         }
-        Museum museum = Museum.findById(id);
-        if (museum == null) {
+        return response;
+    }
+
+    private Response findAll() {
+        List<Museum> museums = Museum.findBySQL("SELECT * FROM MUSEUMS");
+        if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonArray array = new JsonArray();
-        array.add(JsonUtil.museumToJson(museum));
-        return Response.ok(array.toString()).build();
+        return Response.ok(convertMuseumListToJsonArrayAsString(museums)).build();
     }
 
     private Response findByNameAndCityId(String name, Integer cityId) {
-        if (cityId < 0) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
         List<Museum> museums = Museum.where(format("name = '%s', city_id = '%s'", name, cityId));
         if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonArray array = new JsonArray();
-        for (Museum museum : museums) {
-            array.add(JsonUtil.museumToJson(museum));
-        }
-        return Response.ok(array.toString()).build();
+        return Response.ok(convertMuseumListToJsonArrayAsString(museums)).build();
     }
 
     private Response findByName(String name) {
@@ -109,26 +111,23 @@ public class AdminMuseumResource {
         if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonArray array = new JsonArray();
-        for (Museum museum : museums) {
-            array.add(JsonUtil.museumToJson(museum));
-        }
-        return Response.ok(array.toString()).build();
+        return Response.ok(convertMuseumListToJsonArrayAsString(museums)).build();
     }
 
     private Response findByCityId(Integer cityId) {
-        if (cityId < 0) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
         List<Museum> museums = Museum.where("city_id = ?", cityId);
         if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        return Response.ok(convertMuseumListToJsonArrayAsString(museums)).build();
+    }
+
+    private String convertMuseumListToJsonArrayAsString(List<Museum> museums) {
         JsonArray array = new JsonArray();
         for (Museum museum : museums) {
             array.add(JsonUtil.museumToJson(museum));
         }
-        return Response.ok(array.toString()).build();
+        return array.toString();
     }
 
 }

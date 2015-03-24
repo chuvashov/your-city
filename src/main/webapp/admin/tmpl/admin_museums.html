@@ -1,34 +1,39 @@
 <div class="view-content">
-<div class="row">
+<div class="row item-offset">
+    <a href="#museums/add" class="btn btn-default" role="button">Create Museum</a>
+</div>
+<div class="row item-offset">
     <div>
-        <form novalidate>
+        <form novalidate name="searchFormByNameAndCity">
             <div class="col-md-8">
                 <div class="input-group input-group-sm">
                     <span class="input-group-addon">Museum Name</span>
-                    <input type="text" placeholder="museum name" ng-pattern="^[0-9a-zA-ZА-Яа-яЁё\s]+$" class="form-control"
-                           ng-model="museumNameSearch">
-                    <span class="input-group-addon">City ID</span>
-                    <input type="number" placeholder="city id (digits)" class="form-control"
-                           ng-model="cityIdSearch">
+                    <input type="text" placeholder="museum name" ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/" class="form-control"
+                           ng-model="museumNameSearch" name="inputName">
+                    <span class="input-group-addon">City</span>
+                    <select class="form-control" ng-model="citySearch">
+                        <option ng-repeat="city in cityList">{{city}}</option>
+                    </select>
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default" ng-click="findMuseums()">Find</button>
+                        <button type="submit" class="btn btn-default" ng-click="findByNameAndCity()"
+                                ng-disabled="searchFormByNameAndCity.inputName.$invalid">Find</button>
                     </span>
                 </div>
             </div>
         </form>
-        <form novalidate>
+        <form novalidate name="searchFormById">
             <div class="col-md-4">
                 <div class="input-group input-group-sm">
-                    <input type="number" class="form-control" placeholder="museum id (digits)" ng-model="museumIdSearch">
+                    <input type="text" class="form-control" placeholder="museum id" ng-model="museumIdSearch"
+                            ng-pattern="/^[0-9]+$/" name="inputId">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit" ng-click="findMuseums()">Find by ID</button>
+                        <button class="btn btn-default" type="submit" ng-disabled="searchFormById.inputId.$invalid || !museumIdSearch"
+                                ng-click="findById()">Find by ID</button>
                     </span>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<div class="row">
-    <a href="#museums/add" class="btn btn-default" role="button">New Museum</a>
-</div>
+
 </div>
