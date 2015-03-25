@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.yourcity.model.City;
 import com.yourcity.model.Museum;
 import com.yourcity.model.MuseumImage;
+import com.yourcity.service.ImageProvider;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -20,7 +21,7 @@ public class JsonUtil {
         jsonObj.addProperty("phone", museum.getPhone());
         jsonObj.addProperty("email", museum.getEmail());
         jsonObj.addProperty("cityId", museum.getCityId());
-        jsonObj.addProperty("image", museum.getImage());
+        jsonObj.addProperty("image", ImageProvider.getMuseumAvatarUrl(museum.getImage()));
         return jsonObj;
     }
 
@@ -34,7 +35,7 @@ public class JsonUtil {
     public static JsonObject museumImageToJson(MuseumImage imageObject) {
         JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("description", imageObject.getDescription());
-        jsonObj.addProperty("src", imageObject.getSrc());
+        jsonObj.addProperty("src", ImageProvider.getMuseumImageUrl(imageObject.getSrc()));
         jsonObj.addProperty("museumId", imageObject.getMuseumImageId());
         return jsonObj;
     }

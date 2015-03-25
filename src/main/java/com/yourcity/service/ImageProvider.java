@@ -24,10 +24,9 @@ public class ImageProvider {
     private static final String DEFAULT_MUSEUM_AVATAR = "/application/images/default_museum_avatar.png";
 
     public static String getMuseumAvatarUrl(String img) {
-        if (isMuseumAvatarImage(img)) {
-            return IMAGES_DIR + MUSEUM_AVATAR_DIR + img;
-        }
-        return DEFAULT_MUSEUM_AVATAR;
+        return isMuseumAvatarImage(img)
+                ? IMAGES_DIR + MUSEUM_AVATAR_DIR + img
+                : DEFAULT_MUSEUM_AVATAR;
     }
 
     public static String getMuseumImageUrl(String img) {
@@ -39,11 +38,17 @@ public class ImageProvider {
     }
 
     public static boolean isMuseumAvatarImage(String imgName) {
+        if (imgName == null) {
+            return false;
+        }
         File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
     public static boolean isMuseumImage(String imgName) {
+        if (imgName == null) {
+            return false;
+        }
         File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }

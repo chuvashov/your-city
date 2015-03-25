@@ -2,6 +2,7 @@ package com.yourcity.adminresource;
 
 import com.google.gson.JsonArray;
 import com.yourcity.model.Museum;
+import com.yourcity.model.MuseumImage;
 import com.yourcity.service.ImageProvider;
 import com.yourcity.util.CityUtil;
 import com.yourcity.util.JsonUtil;
@@ -53,14 +54,26 @@ public class AdminMuseumResource {
         }
     }
 
-    private boolean isValidString(String name) {
-        return name != null && !name.isEmpty();
+    @POST
+    @Path("/museum/delete")
+    @Consumes("application/json")
+    public Response deleteMuseum(@QueryParam("id") Integer id) {
+        if (!isValidId(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        //delete avatar
+        if (Museum.delete("id = ?", id) == 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        //delete images
+        MuseumImage.delete("museum_id = ?", id);
+        return Response.ok().build();
     }
 
     @GET
     @Path("/museum/id")
     public Response findById(@QueryParam("id") Integer id) {
-        if (id != null && id > 0) {
+        if (isValidId(id)) {
             Museum museum = Museum.findById(id);
             if (museum == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -76,7 +89,7 @@ public class AdminMuseumResource {
     @Path("/museum")
     public Response find(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name) {
         Response response;
-        if (cityId != null && cityId > 0) {
+        if (isValidId(cityId)) {
             if (isValidString(name)) {
                 response = findByNameAndCityId(name, cityId);
             } else {
@@ -91,7 +104,7 @@ public class AdminMuseumResource {
     }
 
     private Response findAll() {
-        List<Museum> museums = Museum.findBySQL("SELECT * FROM MUSEUMS");
+        List<Museum> museums = Museum.findBySQL("SELECT * FROM MUSEUMS;");
         if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -99,7 +112,7 @@ public class AdminMuseumResource {
     }
 
     private Response findByNameAndCityId(String name, Integer cityId) {
-        List<Museum> museums = Museum.where(format("name = '%s', city_id = '%s'", name, cityId));
+        List<Museum> museums = Museum.where(format("name = '%s' and city_id = '%s'", name, cityId));
         if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -129,5 +142,14 @@ public class AdminMuseumResource {
         }
         return array.toString();
     }
+
+    private boolean isValidString(String name) {
+        return name != null && !name.isEmpty();
+    }
+
+    private boolean isValidId(Integer id) {
+        return id != null && id > 0;
+    }
+
 
 }
