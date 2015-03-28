@@ -1,20 +1,50 @@
 /**
- * Created by Andrey on 25.03.2015.
+ * Created by Andrey on 26.03.2015.
  */
-angular.module('museumAdding', [])
-    .controller('museumAddingCtrl', ['$scope', '$http', '$location', '$timeout',
-        function ($scope, $http, $location, $timeout) {
-            $scope.museum = {};
-            $scope.museum.image = $scope.defaultMuseumAvatar;
-            $scope.museum.city = '';
+angular.module('museumEditing', [])
+    .controller('museumEditingCtrl', ['$scope', '$http', '$location', '$timeout', '$routeParams',
+        function ($scope, $http, $location, $timeout, $routeParams) {
+            $scope.museum = $scope.getSavedMuseum();
+            if ($routeParams.museumId == $scope.museum.id) {
+                $scope.museumOriginal = angular.copy($scope.museum);
+            } else {
+                $scope.museum = {};
+                $scope.museumOriginal = {};
+                $http.get('/rest/admin/museum/id?id=' + $routeParams.museumId)
+                    .success(function (data) {
+                        $scope.museum = angular.copy(data[0]);
+                        $scope.museumOriginal = data[0];
+                        updateCities();
+                    })
+                    .error(function () {
+                        $scope.errorLoadingMuseum = true;
+                        $scope.errorMuseumId = $routeParams.museumId;
+                        $timeout(function () {
+                            $location.path('museums');
+                        }, 2000);
+                    });
+            }
             $scope.cityList = [];
+            $scope.cityName = '';
             var updateCities = function () {
-                $scope.museum.city = $scope.cities[0].name;
                 $scope.cityList = [];
                 $.each($scope.cities, function (j, city) {
                     $scope.cityList.push(city.name);
                 });
+                chooseCity();
             };
+            var chooseCity = function () {
+                debugger;
+                if ($scope.museum.cityId) {
+                    $.each($scope.cities, function (j, city) {
+                        if (city.id == $scope.museum.cityId) {
+                            $scope.cityName = city.name;
+                            return false;
+                        }
+                    });
+                }
+            };
+
             if ($scope.cities.length > 0) {
                 updateCities();
             }
@@ -50,48 +80,20 @@ angular.module('museumAdding', [])
 
             $scope.save = function () {
                 $scope.progressBar = true;
-                var requestParam = '';
-                if ($scope.museum.name) {
-                    requestParam = 'name=' + $scope.museum.name;
-                } else {
-                    return;
-                }
-                if ($scope.museum.city) {
-                    $.each($scope.cities, function (j, city) {
-                        if ($scope.museum.city == city.name) {
-                            requestParam += '&cityId=' + city.id;
-                        }
-                    });
-                } else {
-                    return;
-                }
-                if ($scope.museum.address) {
-                    requestParam += '&address=' + $scope.museum.address;
-                }
-                if ($scope.museum.email) {
-                    requestParam += '&email=' + $scope.museum.email;
-                }
-                if ($scope.museum.description) {
-                    requestParam += '&description=' + $scope.museum.description;
-                }
-                if ($scope.museum.about) {
-                    requestParam += '&about=' + $scope.museum.about;
-                }
-                if ($scope.museum.phone) {
-                    requestParam += '&phone=' + $scope.museum.phone;
-                }
-                var result = "";
-                if ($scope.museum.image
-                    && ($scope.museum.image !== $scope.defaultMuseumAvatar)) {
-                    result = $scope.museum.image;
-                }
-                $http.post('/rest/admin/museum/add?' + requestParam, result, {
+                $.each($scope.cities, function (j, city) {
+                    if ($scope.cityName == city.name) {
+                        $scope.museum.cityId = city.id;
+                        return false;
+                    }
+                });
+                $http.post('/rest/admin/museum/update?id=' + $routeParams.museumId, angular.toJson($scope.museum), {
                     headers: {'Content-Type': 'application/json'}
                 })
                     .success(function () {
                         $scope.progressBar = false;
                         $scope.created = true;
                         $scope.hasError = false;
+                        $scope.museumOriginal = angular.copy($scope.museum);
                         $timeout(function () {
                             $scope.created = false;
                         }, 3000);
@@ -125,4 +127,28 @@ angular.module('museumAdding', [])
                 reader.readAsDataURL(files[0]);
             };
 
+            $scope.setOriginalMuseum = function () {
+                $scope.museum = angular.copy($scope.museumOriginal);
+                chooseCity();
+            };
+
+            $scope.deleteMuseum = function () {
+                $scope.deleteError = false;
+                $scope.progressBar = true;
+                $http.post('/rest/admin/museum/delete?id=' + $routeParams.museumId)
+                    .success(function () {
+                        $scope.deleted = true;
+                        $timeout(function () {
+                            $location.path('museums');
+                        }, 2000);
+                        $scope.progressBar = false;
+                    })
+                    .error(function () {
+                        $scope.deleteError = true;
+                        $timeout(function () {
+                            $scope.deleteError = false;
+                        }, 3000);
+                        $scope.progressBar = false;
+                    });
+            };
         }]);

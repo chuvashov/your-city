@@ -80,7 +80,7 @@ angular.module('museumSearch', [])
                             $scope.foundMuseums.splice(j, 1);
                             break;
                         }
-                    };
+                    }
                 })
                 .error(function () {
                     $scope.hasError = true;

@@ -45,11 +45,12 @@
                 <img ng-src="{{museum.image}}" alt="loading...">
 
                 <div class="caption">
-                    <h3>{{museum.name}}</h3><span style="color: #c7254e">ID: {{museum.id}}</span>
+                    <h3>{{museum.name}}</h3>
+                    <p style="color: #c7254e">ID: {{museum.id}}</p>
                     <p>{{museum.description}}</p>
 
                     <p>
-                        <a href="#museums/view/{{museum.id}}" class="btn btn-primary" role="button">Edit</a>
+                        <a href="#museums/{{museum.id}}/edit" ng-click="saveMuseumInKeeper()" class="btn btn-primary" role="button">Edit</a>
                         <button ng-click="deleteMuseum(museum.id)" class="btn btn-danger">Delete</button>
                     </p>
                 </div>

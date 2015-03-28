@@ -1,11 +1,14 @@
 package com.yourcity.adminresource;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonArray;
 import com.yourcity.model.Museum;
 import com.yourcity.model.MuseumImage;
 import com.yourcity.service.ImageProvider;
 import com.yourcity.util.CityUtil;
 import com.yourcity.util.JsonUtil;
+import com.yourcity.util.MuseumConversionFromJsonException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -24,8 +27,8 @@ public class AdminMuseumResource {
     @Path("/museum/add")
     @Consumes("application/json")
     public Response addNewMuseum(String imageBase64, @QueryParam("name") String name, @QueryParam("description") String description
-            , @QueryParam("email") String email, @QueryParam("about") String about, @QueryParam("phone") String phone
-            , @QueryParam("address") String address, @QueryParam("cityId") Integer cityId) {
+            ,@QueryParam("email") String email, @QueryParam("about") String about, @QueryParam("phone") String phone
+            ,@QueryParam("address") String address, @QueryParam("cityId") Integer cityId) {
         if (!isValidString(name) || !CityUtil.existCityId(cityId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -39,7 +42,7 @@ public class AdminMuseumResource {
             museum.setPhone(phone);
             museum.setAddress(address);
             if (isValidString(imageBase64)) {
-                String imageName = ImageProvider.saveAvatarBase64ImageAndGetName(imageBase64);
+                String imageName = ImageProvider.saveMuseumAvatarBase64AndGetName(imageBase64);
                 if (imageName != null) {
                     museum.setImage(imageName);
                 }
@@ -61,13 +64,67 @@ public class AdminMuseumResource {
         if (!isValidId(id)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        //delete avatar
-        if (Museum.delete("id = ?", id) == 0) {
+        List<Museum> museums = Museum.where("id = ?", id);
+        if (museums.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        //delete images
+        Museum museum = museums.get(0);
+        String avatar = museum.getImage();
+        if (!museum.delete()) {
+            return Response.serverError().build();
+        }
+        ImageProvider.deleteMuseumAvatar(avatar);
+
+        List<MuseumImage> museumImages = MuseumImage.where("museum_id = ?", id);
+        for (MuseumImage museumImage : museumImages) {
+            ImageProvider.deleteMuseumImage(museumImage.getSrc());
+        };
         MuseumImage.delete("museum_id = ?", id);
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/museum/update")
+    @Consumes("application/json")
+    public Response updateMuseum(String updatedMuseumJson, @QueryParam("id") Integer id) {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonMuseum = (JsonObject) parser.parse(updatedMuseumJson);
+
+        if (!isValidId(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        Museum museum;
+        try {
+            museum = (Museum) Museum.where("id = ?", id).get(0);
+            JsonUtil.jsonToMuseum(jsonMuseum, museum);
+        } catch (MuseumConversionFromJsonException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (museum.saveIt()) {
+            return Response.ok().build();
+        } else {
+            return Response.serverError().build();
+        }
+    }
+
+    @GET
+    @Path("/museum/images")
+    public Response getMuseumImages(@QueryParam("museumId") Integer museumId) {
+        if (!isValidId(museumId)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        List<MuseumImage> museumImages = MuseumImage.where("museumId = ?", museumId);
+        if (museumImages.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        JsonArray array = new JsonArray();
+        for (MuseumImage museumImage : museumImages) {
+            array.add(JsonUtil.museumImageToJson(museumImage));
+        }
+        return Response.ok(array.toString()).build();
     }
 
     @GET

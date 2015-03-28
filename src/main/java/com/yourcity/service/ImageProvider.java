@@ -53,8 +53,21 @@ public class ImageProvider {
         return imgFile.exists() && imgFile.isFile();
     }
 
-    public static String saveAvatarBase64ImageAndGetName(String base64Image) {
+    public static String saveMuseumAvatarBase64AndGetName(String base64Image) {
         return saveImageAndReturnName(base64Image, WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR);
+    }
+
+    public static boolean deleteMuseumAvatar(String img) {
+        return img != null && deleteImage(WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + img);
+    }
+
+    public static boolean deleteMuseumImage(String img) {
+        return img != null && deleteImage(WEBAPP_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + img);
+    }
+
+    private static boolean deleteImage(String path) {
+        File img = new File(path);
+        return img.exists() && img.isFile() && img.delete();
     }
 
     private static String saveImageAndReturnName(String base64Image, String dir) {
