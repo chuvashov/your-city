@@ -3,6 +3,11 @@ form .ng-invalid.ng-dirty {
     border-color: #d43f3a;
 }
 
+.input-edit-mode.ng-invalid.ng-dirty {
+    background-color: #ffcccc;
+    border-color: #d43f3a;
+}
+
 form .error-message {
     color: #d43f3a;
     font-size: 11px;

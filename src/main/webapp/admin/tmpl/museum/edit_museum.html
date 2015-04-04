@@ -14,6 +14,7 @@
                 <button type="button" class="btn btn-danger" ng-disabled="progressBar" ng-click="deleteMuseum()">Delete Museum</button>
                 <img ng-if="progressBar" style="width: 30px; height: 30px; margin-left: 10px;" ng-src="{{waitProgress}}"/>
             </div>
+            <a type="button" href="#museums/{{museum.id}}/images" class="btn btn-default item-offset" role="button" style="margin-left: 5%">Edit Images</a>
         </div>
         <div class="item-offset"></div>
         <div class="row">

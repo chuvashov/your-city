@@ -1,6 +1,6 @@
-package com.yourcity.util;
+package com.yourcity.service.util;
 
-import com.yourcity.model.City;
+import com.yourcity.service.model.City;
 import org.javalite.activejdbc.LazyList;
 
 import java.util.ArrayList;

@@ -4,9 +4,9 @@ import org.javalite.activejdbc.Base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.ext.Provider;
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -14,17 +14,19 @@ import java.util.Properties;
 /**
  * Created by Andrey on 08.02.2015.
  */
-@Provider
-public class DatabaseProvider implements ContainerRequestFilter {
+@Singleton
+@Startup
+public class DatabaseProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProvider.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(DatabaseProvider.class);
 
-    private static String DB_USER;
-    private static String DB_PASSWORD;
-    private static String DB_URL;
-    private static String DB_DRIVER;
+    private String DB_USER;
+    private String DB_PASSWORD;
+    private String DB_URL;
+    private String DB_DRIVER;
 
-    static {
+    @PostConstruct
+    public void loadInitProp() {
         Properties properties = new Properties();
 
         try (InputStream stream = DatabaseProvider.class.getResourceAsStream("/application.properties")) {
@@ -47,18 +49,13 @@ public class DatabaseProvider implements ContainerRequestFilter {
         LOGGER.info("Database connection is opened.");
     }
 
-    private static void openConnection() {
+    public void openConnection() {
         if (!Base.hasConnection()) {
             Base.open(DB_DRIVER, DB_URL, DB_USER, DB_PASSWORD);
         }
     }
 
-    @Override
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        openConnection();
-    }
-
-    public static void closeConnection() {
+    public void closeConnection() {
         Base.close();
     }
 }

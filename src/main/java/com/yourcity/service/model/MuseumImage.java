@@ -1,7 +1,8 @@
-package com.yourcity.model;
+package com.yourcity.service.model;
 
 import org.javalite.activejdbc.Model;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -13,8 +14,16 @@ public class MuseumImage extends Model {
         return getInteger("id");
     }
 
+    public void setMuseumId(@NotNull @Min(0) Integer museumId) {
+        setInteger("museum_id", museumId);
+    }
+
+    public Integer getMuseumId() {
+        return getInteger("museum_id");
+    }
+
     public void setDescription(String description) {
-        setString("description", description);
+        set("description", description);
     }
 
     public String getDescription() {

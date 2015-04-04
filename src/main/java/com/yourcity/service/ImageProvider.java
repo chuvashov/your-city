@@ -4,7 +4,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import java.io.*;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -15,24 +19,44 @@ public class ImageProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageProvider.class);
 
     //paths
-    private static final String WEBAPP_DIR = "src/main/webapp";
+    private static String IMAGE_REPOSITORY_DIR;
+    private static final String SERVER_APP_PREFIX = "/your-city";
     private static final String IMAGES_DIR = "/your-city-images";
     private static final String MUSEUM_AVATAR_DIR = "/museum/avatars/";
     private static final String MUSEUM_IMAGES_DIR = "/museum/images/";
 
     //defaults
-    private static final String DEFAULT_MUSEUM_AVATAR = "/application/images/default_museum_avatar.png";
+    private static final String DEFAULT_MUSEUM_AVATAR = "/your-city/application/images/default_museum_avatar.png";
+
+    static {
+        Properties properties = new Properties();
+
+        try (InputStream stream = ImageProvider.class.getResourceAsStream("/application.properties")) {
+            properties.load(stream);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        try {
+            IMAGE_REPOSITORY_DIR = properties.getProperty("imageRepository");
+
+            LOGGER.info("Read image repository location from property file. ImageRepositoryLocation = \""
+                + IMAGE_REPOSITORY_DIR + "\"");
+        } catch (Exception e) {
+            LOGGER.error("Failed to read image repository location.", e);
+        }
+    }
 
     public static String getMuseumAvatarUrl(String img) {
         return isMuseumAvatarImage(img)
-                ? IMAGES_DIR + MUSEUM_AVATAR_DIR + img
+                ? SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_AVATAR_DIR + img
                 : DEFAULT_MUSEUM_AVATAR;
     }
 
     public static String getMuseumImageUrl(String img) {
         String url = "";
         if (isMuseumImage(img)) {
-            url = IMAGES_DIR + MUSEUM_IMAGES_DIR + img;
+            url = SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_IMAGES_DIR + img;
         }
         return url;
     }
@@ -41,7 +65,7 @@ public class ImageProvider {
         if (imgName == null) {
             return false;
         }
-        File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + imgName);
+        File imgFile = new File(SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_AVATAR_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
@@ -49,20 +73,24 @@ public class ImageProvider {
         if (imgName == null) {
             return false;
         }
-        File imgFile = new File(WEBAPP_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + imgName);
+        File imgFile = new File(SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_IMAGES_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
     public static String saveMuseumAvatarBase64AndGetName(String base64Image) {
-        return saveImageAndReturnName(base64Image, WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR);
+        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR);
+    }
+
+    public static String saveMuseumImageBase64AndGetName(String base64Image) {
+        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR);
     }
 
     public static boolean deleteMuseumAvatar(String img) {
-        return img != null && deleteImage(WEBAPP_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + img);
+        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + img);
     }
 
     public static boolean deleteMuseumImage(String img) {
-        return img != null && deleteImage(WEBAPP_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + img);
+        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + img);
     }
 
     private static boolean deleteImage(String path) {

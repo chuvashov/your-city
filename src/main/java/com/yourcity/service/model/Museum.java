@@ -1,4 +1,4 @@
-package com.yourcity.model;
+package com.yourcity.service.model;
 
 import org.javalite.activejdbc.Model;
 
@@ -31,7 +31,7 @@ public class Museum extends Model {
     }
 
     public void setPhone(String phone) {
-        setString("phone", phone);
+        set("phone", phone);
     }
 
     public String getPhone() {
@@ -39,7 +39,7 @@ public class Museum extends Model {
     }
 
     public void setEmail(String email) {
-        setString("email", email);
+        set("email", email);
     }
 
     public String getEmail() {
@@ -47,7 +47,7 @@ public class Museum extends Model {
     }
 
     public void setDescription(String description) {
-        setString("description", description);
+        set("description", description);
     }
 
     public String getDescription() {

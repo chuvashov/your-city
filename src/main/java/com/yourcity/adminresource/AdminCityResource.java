@@ -1,9 +1,9 @@
 package com.yourcity.adminresource;
 
 import com.google.gson.JsonArray;
-import com.yourcity.model.City;
-import com.yourcity.util.CityUtil;
-import com.yourcity.util.JsonUtil;
+import com.yourcity.service.model.City;
+import com.yourcity.service.util.CityUtil;
+import com.yourcity.service.util.JsonUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -11,12 +11,12 @@ import javax.ws.rs.core.Response;
 /**
  * Created by Andrey on 08.03.2015.
  */
-@Path("/rest/admin/city")
+@Path("rest/admin/city")
 @Produces("application/json")
 public class AdminCityResource {
 
     @GET
-    @Path("/all")
+    @Path("all")
     public Response getAllCities() {
         JsonArray array = new JsonArray();
         for (City city : CityUtil.getCities()) {
@@ -26,7 +26,7 @@ public class AdminCityResource {
     }
 
     @POST
-    @Path("/add")
+    @Path("add")
     public Response addCity(@QueryParam("name") String name) {
         if (!isValidCityName(name)) {
             return Response.status(Response.Status.BAD_REQUEST).build();

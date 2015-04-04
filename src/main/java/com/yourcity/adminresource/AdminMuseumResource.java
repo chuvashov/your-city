@@ -3,12 +3,12 @@ package com.yourcity.adminresource;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonArray;
-import com.yourcity.model.Museum;
-import com.yourcity.model.MuseumImage;
+import com.yourcity.service.model.Museum;
+import com.yourcity.service.model.MuseumImage;
 import com.yourcity.service.ImageProvider;
-import com.yourcity.util.CityUtil;
-import com.yourcity.util.JsonUtil;
-import com.yourcity.util.MuseumConversionFromJsonException;
+import com.yourcity.service.util.CityUtil;
+import com.yourcity.service.util.JsonUtil;
+import com.yourcity.service.util.ConversionFromJsonException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -19,12 +19,12 @@ import static java.lang.String.format;
 /**
  * Created by Andrey on 08.03.2015.
  */
-@Path("/rest/admin")
+@Path("rest/admin")
 @Produces("application/json")
 public class AdminMuseumResource {
 
     @POST
-    @Path("/museum/add")
+    @Path("museum/add")
     @Consumes("application/json")
     public Response addNewMuseum(String imageBase64, @QueryParam("name") String name, @QueryParam("description") String description
             ,@QueryParam("email") String email, @QueryParam("about") String about, @QueryParam("phone") String phone
@@ -47,18 +47,18 @@ public class AdminMuseumResource {
                     museum.setImage(imageName);
                 }
             }
+            if (museum.saveIt()) {
+                return Response.status(Response.Status.CREATED).build();
+            } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        if (museum.saveIt()) {
-            return Response.status(Response.Status.CREATED).build();
-        } else {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @POST
-    @Path("/museum/delete")
+    @Path("museum/delete")
     @Consumes("application/json")
     public Response deleteMuseum(@QueryParam("id") Integer id) {
         if (!isValidId(id)) {
@@ -84,9 +84,9 @@ public class AdminMuseumResource {
     }
 
     @POST
-    @Path("/museum/update")
+    @Path("museum/update")
     @Consumes("application/json")
-    public Response updateMuseum(String updatedMuseumJson, @QueryParam("id") Integer id) {
+    public Response updateMuseumImage(String updatedMuseumJson, @QueryParam("id") Integer id) {
         JsonParser parser = new JsonParser();
         JsonObject jsonMuseum = (JsonObject) parser.parse(updatedMuseumJson);
 
@@ -97,26 +97,78 @@ public class AdminMuseumResource {
         try {
             museum = (Museum) Museum.where("id = ?", id).get(0);
             JsonUtil.jsonToMuseum(jsonMuseum, museum);
-        } catch (MuseumConversionFromJsonException e) {
+        } catch (ConversionFromJsonException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         if (museum.saveIt()) {
+
             return Response.ok().build();
         } else {
             return Response.serverError().build();
         }
     }
 
+    @POST
+    @Path("museum/image/delete")
+    public Response deleteMuseumImage(@QueryParam("id") Integer id) {
+        if (!isValidId(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        Response response;
+        int count = MuseumImage.delete("id = ?", id);
+        if (count > 0) {
+            response = Response.ok().build();
+        } else {
+            response = Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return response;
+    }
+
+    @POST
+    @Path("museum/image/update")
+    @Consumes("application/json")
+    public Response updateMuseum(String updatedMuseumJson, @QueryParam("id") Integer id) {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonMuseumImage = (JsonObject) parser.parse(updatedMuseumJson);
+
+        MuseumImage museumImage;
+        if (id == null || id < 0) {
+            museumImage = new MuseumImage();
+        } else if (isValidId(id)) {
+            List<MuseumImage> museumImages = MuseumImage.where("id = ?", id);
+            if (museumImages.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            museumImage = museumImages.get(0);
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        try {
+            JsonUtil.jsonToMuseumImage(jsonMuseumImage, museumImage);
+            if (museumImage.saveIt()) {
+                JsonArray array = new JsonArray();
+                array.add(JsonUtil.museumImageToJson(museumImage));
+                return Response.ok(array.toString()).build();
+            } else {
+                return Response.serverError().build();
+            }
+        } catch (ConversionFromJsonException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return Response.serverError().build();
+        }
+    }
+
     @GET
-    @Path("/museum/images")
+    @Path("museum/images")
     public Response getMuseumImages(@QueryParam("museumId") Integer museumId) {
         if (!isValidId(museumId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        List<MuseumImage> museumImages = MuseumImage.where("museumId = ?", museumId);
+        List<MuseumImage> museumImages = MuseumImage.where("museum_id = ?", museumId);
         if (museumImages.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -128,7 +180,7 @@ public class AdminMuseumResource {
     }
 
     @GET
-    @Path("/museum/id")
+    @Path("museum/id")
     public Response findById(@QueryParam("id") Integer id) {
         if (isValidId(id)) {
             Museum museum = Museum.findById(id);
@@ -143,7 +195,7 @@ public class AdminMuseumResource {
     }
 
     @GET
-    @Path("/museum")
+    @Path("museum")
     public Response find(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name) {
         Response response;
         if (isValidId(cityId)) {

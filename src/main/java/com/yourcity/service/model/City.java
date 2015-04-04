@@ -1,4 +1,4 @@
-package com.yourcity.model;
+package com.yourcity.service.model;
 
 import org.javalite.activejdbc.Model;
 

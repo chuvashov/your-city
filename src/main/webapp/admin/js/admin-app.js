@@ -1,7 +1,7 @@
 /**
  * Created by Andrey on 08.03.2015.
  */
-angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEditing'])
+angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEditing', 'museumImages'])
     .controller('mainAdminCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope) {
         $scope.cities = [];
         $scope.tryToGetCities = function () {
@@ -36,16 +36,20 @@ angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEd
                 template: 'admin registration'
             })
             .when('/museums', {
-                templateUrl: '/admin/tmpl/admin_museums.html',
+                templateUrl: '/admin/tmpl/museum/admin_museums.html',
                 controller: 'museumCtrl'
             })
             .when('/museums/add', {
-                templateUrl: '/admin/tmpl/add_museum.html',
+                templateUrl: '/admin/tmpl/museum/add_museum.html',
                 controller: 'museumAddingCtrl'
             })
             .when('/museums/:museumId/edit', {
-                templateUrl: '/admin/tmpl/edit_museum.html',
+                templateUrl: '/admin/tmpl/museum/edit_museum.html',
                 controller: 'museumEditingCtrl'
+            })
+            .when('/museums/:museumId/images', {
+                templateUrl: '/admin/tmpl/museum/images_museum.html',
+                controller: 'museumImagesCtrl'
             })
             .otherwise({
                 redirectTo: ''

@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-@Path("/admin")
+@Path("admin")
 @Produces(MediaType.TEXT_HTML)
 public class AdminResource {
 

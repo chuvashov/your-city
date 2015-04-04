@@ -2,6 +2,8 @@
     <div class="page-header">
         <h3>{{museumName}}<small> Images</small></h3>
     </div>
+    <div ng-show="noImagesMessage" class="alert alert-warning">No images</div>
+    <div ng-show="loading" class="alert alert-info">Loading...</div>
     <div class="row">
         <div ng-show="noImagesMessage" class="alert alert-warning">No images</div>
         <div ng-show="loading" class="alert alert-info">Loading...</div>

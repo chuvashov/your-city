@@ -34,7 +34,6 @@ angular.module('museumEditing', [])
                 chooseCity();
             };
             var chooseCity = function () {
-                debugger;
                 if ($scope.museum.cityId) {
                     $.each($scope.cities, function (j, city) {
                         if (city.id == $scope.museum.cityId) {

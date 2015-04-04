@@ -1,13 +1,10 @@
-package com.yourcity.util;
+package com.yourcity.service.util;
 
 import com.google.gson.JsonObject;
-import com.yourcity.model.City;
-import com.yourcity.model.Museum;
-import com.yourcity.model.MuseumImage;
+import com.yourcity.service.model.City;
+import com.yourcity.service.model.Museum;
+import com.yourcity.service.model.MuseumImage;
 import com.yourcity.service.ImageProvider;
-
-import javax.ws.rs.core.Response;
-import java.util.Objects;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -40,47 +37,47 @@ public class JsonUtil {
         jsonObj.addProperty("id", imageObject.getMuseumImageId());
         jsonObj.addProperty("description", imageObject.getDescription());
         jsonObj.addProperty("src", ImageProvider.getMuseumImageUrl(imageObject.getSrc()));
-        jsonObj.addProperty("museumId", imageObject.getMuseumImageId());
+        jsonObj.addProperty("museumId", imageObject.getMuseumId());
         return jsonObj;
     }
 
-    public static void jsonToMuseum(JsonObject museumJson, Museum museum) throws MuseumConversionFromJsonException{
+    public static void jsonToMuseum(JsonObject museumJson, Museum museum) throws ConversionFromJsonException {
         Integer id;
         try {
             id = museumJson.get("id").getAsInt();
         } catch (Exception e) {
-            throw new MuseumConversionFromJsonException();
+            throw new ConversionFromJsonException();
         }
         if (museum.getMuseumId() != null && !museum.getMuseumId().equals(id)) {
-            throw new MuseumConversionFromJsonException("ID of Museum object not equals ID from json.");
+            throw new ConversionFromJsonException("ID of Museum object not equals ID from json.");
         }
         try {
-            int cityId = museumJson.get("cityId").getAsInt();
-            if (cityId > 0 && CityUtil.existCityId(cityId)) {
+            Integer cityId = getIntegerFromJson(museumJson, "cityId");
+            if (isValidId(cityId) && CityUtil.existCityId(cityId)) {
                 museum.setCityId(cityId);
             }
 
-            String name = museumJson.get("name").getAsString();
+            String name = getStringFromJson(museumJson, "name");
             if (isValidString(name)) {
                 museum.setName(name);
             }
 
-            String description = museumJson.get("description").getAsString();
+            String description = getStringFromJson(museumJson, "description");
             if (isValidString(description)) {
                 museum.setDescription(description);
             }
 
-            String email = museumJson.get("email").getAsString();
+            String email = getStringFromJson(museumJson, "email");
             if (isValidString(email)) {
                 museum.setEmail(email);
             }
 
-            String about = museumJson.get("about").getAsString();
+            String about = getStringFromJson(museumJson, "about");
             if (isValidString(about)) {
                 museum.setAbout(about);
             }
 
-            String phone = museumJson.get("phone").getAsString();
+            String phone = getStringFromJson(museumJson, "phone");
             if (isValidString(phone)) {
                 museum.setPhone(phone);
             }
@@ -90,7 +87,7 @@ public class JsonUtil {
                 museum.setAddress(address);
             }
 
-            String image = museumJson.get("image").getAsString();
+            String image = getStringFromJson(museumJson, "image");
             if (isValidString(image)) {
                 String imageName = ImageProvider.saveMuseumAvatarBase64AndGetName(image);
                 if (imageName != null) {
@@ -98,7 +95,32 @@ public class JsonUtil {
                 }
             }
         } catch (Exception e) {
-            throw new MuseumConversionFromJsonException();
+            throw new ConversionFromJsonException();
+        }
+    }
+
+    public static void jsonToMuseumImage(JsonObject museumImageJson, MuseumImage museumImage)
+            throws ConversionFromJsonException{
+        try {
+            String description = getStringFromJson(museumImageJson, "description");
+            if (isValidString(description)) {
+                museumImage.setDescription(description);
+            }
+
+            Integer museumId = getIntegerFromJson(museumImageJson, "museumId");
+            if (isValidId(museumId)) {
+                museumImage.setMuseumId(museumId);
+            }
+
+            String image = getStringFromJson(museumImageJson, "src");
+            if (isValidString(image)) {
+                String imageName = ImageProvider.saveMuseumImageBase64AndGetName(image);
+                if (imageName != null) {
+                    museumImage.setSrc(imageName);
+                }
+            }
+        } catch (Exception e) {
+            throw new ConversionFromJsonException();
         }
     }
 
@@ -108,5 +130,21 @@ public class JsonUtil {
 
     private static boolean isValidId(Integer id) {
         return id != null && id > 0;
+    }
+
+    private static Integer getIntegerFromJson(JsonObject jsonObj, String propertyName) {
+        Integer result = null;
+        if (!jsonObj.get(propertyName).isJsonNull()) {
+            result = jsonObj.get(propertyName).getAsInt();
+        };
+        return result;
+    }
+
+    private static String getStringFromJson(JsonObject jsonObj, String propertyName) {
+        String result = null;
+        if (!jsonObj.get(propertyName).isJsonNull()) {
+            result = jsonObj.get(propertyName).getAsString();
+        };
+        return result;
     }
 }
