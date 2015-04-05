@@ -6,7 +6,8 @@ angular.module('mainMuseum', [])
         $scope.museumList = [];
         $scope.loading = null;
         $scope.noMuseumsMessage = false;
-        $scope.tryToGetMuseums = function () {
+
+        var tryToGetMuseums = function () {
             $scope.loading = true;
             $http.get('/your-city/museum/all?city=' + $scope.curCity)
                 .success(function (data) {
@@ -21,5 +22,9 @@ angular.module('mainMuseum', [])
                     $scope.noMuseumsMessage = true;
                 });
         };
-        $scope.tryToGetMuseums();
+        tryToGetMuseums();
+
+        $scope.$on('cityWasChanged', function () {
+            tryToGetMuseums();
+        });
     }]);

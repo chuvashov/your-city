@@ -59,21 +59,21 @@ angular.module('museumSearch', [])
             var cityId = getCityId($scope.citySearch) || '',
                 name = $scope.museumNameSearch || '';
             $scope.hasError = false;
-            $http.get('/rest/admin/museum?cityId=' + cityId + '&name=' + name)
+            $http.get('/your-city/rest/admin/museum?cityId=' + cityId + '&name=' + name)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };
 
         $scope.findById = function () {
             $scope.hasError = false;
-            $http.get('/rest/admin/museum/id?id=' + $scope.museumIdSearch)
+            $http.get('/your-city/rest/admin/museum/id?id=' + $scope.museumIdSearch)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };
 
         $scope.deleteMuseum = function (id) {
             $scope.hasError = false;
-            $http.post('/rest/admin/museum/delete?id=' + id)
+            $http.post('/your-city/rest/admin/museum/delete?id=' + id)
                 .success(function () {
                     for (var j = 0; $scope.foundMuseums.length; j++) {
                         if ($scope.foundMuseums[j].id == id) {

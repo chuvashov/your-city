@@ -79,5 +79,4 @@ public class MuseumResource {
         return Response.ok(array.toString()).build();
     }
 
-
 }

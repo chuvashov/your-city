@@ -7,11 +7,13 @@ angular.module('museumImagesView', [])
         $scope.loading = null;
         $scope.noImagesMessage = false;
         $scope.museumName = "";
+
         $http.get('/your-city/museum/info/byId?id=' + $routeParams.museumId)
             .success(function (data) {
                 $scope.museumName = data.name;
             });
-        $scope.tryToGetImages = function () {
+
+        var tryToGetImages = function () {
             $scope.loading = true;
             $http.get('/your-city/museum/images?id=' + $routeParams.museumId)
                 .success(function (data) {
@@ -29,5 +31,5 @@ angular.module('museumImagesView', [])
                     $scope.loading = false;
                 });
         };
-        $scope.tryToGetImages();
+        tryToGetImages();
     }]);

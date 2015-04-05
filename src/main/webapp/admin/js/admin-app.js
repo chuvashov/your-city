@@ -5,7 +5,7 @@ angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEd
     .controller('mainAdminCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope) {
         $scope.cities = [];
         $scope.tryToGetCities = function () {
-            $http.get('/rest/admin/city/all')
+            $http.get('/your-city/rest/admin/city/all')
                 .success(function (data) {
                     $scope.cities = data;
                     $rootScope.$broadcast('citiesLoaded');
@@ -16,8 +16,8 @@ angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEd
         };
         $scope.tryToGetCities();
 
-        $scope.defaultMuseumAvatar = '/application/images/default_museum_avatar.png';
-        $scope.waitProgress = '/application/images/wait_progress.gif';
+        $scope.defaultMuseumAvatar = '/your-city/application/images/default_museum_avatar.png';
+        $scope.waitProgress = '/your-city/application/images/wait_progress.gif';
 
         var _museum = {};
         $scope.saveMuseumInKeeper = function (museum) {
@@ -36,19 +36,19 @@ angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEd
                 template: 'admin registration'
             })
             .when('/museums', {
-                templateUrl: '/admin/tmpl/museum/admin_museums.html',
+                templateUrl: '/your-city/admin/tmpl/museum/admin_museums.html',
                 controller: 'museumCtrl'
             })
             .when('/museums/add', {
-                templateUrl: '/admin/tmpl/museum/add_museum.html',
+                templateUrl: '/your-city/admin/tmpl/museum/add_museum.html',
                 controller: 'museumAddingCtrl'
             })
             .when('/museums/:museumId/edit', {
-                templateUrl: '/admin/tmpl/museum/edit_museum.html',
+                templateUrl: '/your-city/admin/tmpl/museum/edit_museum.html',
                 controller: 'museumEditingCtrl'
             })
             .when('/museums/:museumId/images', {
-                templateUrl: '/admin/tmpl/museum/images_museum.html',
+                templateUrl: '/your-city/admin/tmpl/museum/images_museum.html',
                 controller: 'museumImagesCtrl'
             })
             .otherwise({

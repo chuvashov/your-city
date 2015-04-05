@@ -10,7 +10,7 @@ angular.module('museumEditing', [])
             } else {
                 $scope.museum = {};
                 $scope.museumOriginal = {};
-                $http.get('/rest/admin/museum/id?id=' + $routeParams.museumId)
+                $http.get('/your-city/rest/admin/museum/id?id=' + $routeParams.museumId)
                     .success(function (data) {
                         $scope.museum = angular.copy(data[0]);
                         $scope.museumOriginal = data[0];
@@ -85,7 +85,7 @@ angular.module('museumEditing', [])
                         return false;
                     }
                 });
-                $http.post('/rest/admin/museum/update?id=' + $routeParams.museumId, angular.toJson($scope.museum), {
+                $http.post('/your-city/rest/admin/museum/update?id=' + $routeParams.museumId, angular.toJson($scope.museum), {
                     headers: {'Content-Type': 'application/json'}
                 })
                     .success(function () {
@@ -134,7 +134,7 @@ angular.module('museumEditing', [])
             $scope.deleteMuseum = function () {
                 $scope.deleteError = false;
                 $scope.progressBar = true;
-                $http.post('/rest/admin/museum/delete?id=' + $routeParams.museumId)
+                $http.post('/your-city/rest/admin/museum/delete?id=' + $routeParams.museumId)
                     .success(function () {
                         $scope.deleted = true;
                         $timeout(function () {

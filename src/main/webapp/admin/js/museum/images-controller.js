@@ -8,7 +8,7 @@ angular.module('museumImages', [])
             var imageOriginalKeeper = [],
                 idGenerator = -1;
             $scope.tryToGetImages = function () {
-                $http.get('/rest/admin/museum/images?museumId=' + $routeParams.museumId)
+                $http.get('/your-city/rest/admin/museum/images?museumId=' + $routeParams.museumId)
                     .success(function (data) {
                         $scope.notFound = false;
                         $scope.hasError = false;
@@ -66,7 +66,7 @@ angular.module('museumImages', [])
                     $editButton = $('#edit-button-' + img.id);
                 $deleteButton.attr('enable', false);
                 $editButton.attr('enable', false);
-                $http.post('/rest/admin/museum/image/delete?id=' + img.id)
+                $http.post('/your-city/rest/admin/museum/image/delete?id=' + img.id)
                     .success(function () {
                         var index = getImageIndexById(img.id);
                         $scope.images.splice(index, 1);
@@ -98,7 +98,7 @@ angular.module('museumImages', [])
                 museumImage.src = img.src;
                 museumImage.id = img.id;
                 museumImage.museumId = $routeParams.museumId;
-                $http.post('/rest/admin/museum/image/update?id=' + museumImage.id, angular.toJson(museumImage), {
+                $http.post('/your-city/rest/admin/museum/image/update?id=' + museumImage.id, angular.toJson(museumImage), {
                     headers: {'Content-Type': 'application/json'}
                 })
                     .success(function (data) {

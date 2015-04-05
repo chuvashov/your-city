@@ -85,7 +85,7 @@ angular.module('museumAdding', [])
                     && ($scope.museum.image !== $scope.defaultMuseumAvatar)) {
                     result = $scope.museum.image;
                 }
-                $http.post('/rest/admin/museum/add?' + requestParam, result, {
+                $http.post('/your-city/rest/admin/museum/add?' + requestParam, result, {
                     headers: {'Content-Type': 'application/json'}
                 })
                     .success(function () {

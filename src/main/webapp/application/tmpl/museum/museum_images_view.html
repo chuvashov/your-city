@@ -5,8 +5,6 @@
     <div ng-show="noImagesMessage" class="alert alert-warning">No images</div>
     <div ng-show="loading" class="alert alert-info">Loading...</div>
     <div class="row">
-        <div ng-show="noImagesMessage" class="alert alert-warning">No images</div>
-        <div ng-show="loading" class="alert alert-info">Loading...</div>
         <div class="col-xs-6 col-md-4" ng-repeat="img in images">
             <div class="thumbnail">
                 <img ng-src="{{img.src}}" alt="loading...">

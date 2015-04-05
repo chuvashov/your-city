@@ -5,9 +5,9 @@
     <div class="row">
         <div class="well well-sm col-md-8">{{museum.about}}</div>
         <div class="col-md-4">
-            <img style="border: 1px solid gray;" ng-src="{{museum.image}}" alt="loading...">
+            <img style="border: 1px solid #cccccc;" ng-src="{{museum.image}}" alt="loading..." class="item-offset">
             <hr>
-            <a style="text-align: left" href="#museums/view/{{museum.id}}" class="btn btn-default" role="button">Show images</a>
+            <a href="#museums/view/{{museum.id}}" class="btn btn-default item-offset" role="button">Show images</a>
 
             <div ng-show="museum.address" class="panel panel-info">
                 <div class="panel-heading">

@@ -20,12 +20,11 @@ public class ImageProvider {
 
     //paths
     private static String IMAGE_REPOSITORY_DIR;
-    private static final String SERVER_APP_PREFIX = "/your-city";
-    private static final String IMAGES_DIR = "/your-city-images";
     private static final String MUSEUM_AVATAR_DIR = "/museum/avatars/";
     private static final String MUSEUM_IMAGES_DIR = "/museum/images/";
 
     //defaults
+    private static final String IMAGE_URL_PREFIX = "/your-city/images-repository?path=";
     private static final String DEFAULT_MUSEUM_AVATAR = "/your-city/application/images/default_museum_avatar.png";
 
     static {
@@ -41,7 +40,7 @@ public class ImageProvider {
             IMAGE_REPOSITORY_DIR = properties.getProperty("imageRepository");
 
             LOGGER.info("Read image repository location from property file. ImageRepositoryLocation = \""
-                + IMAGE_REPOSITORY_DIR + "\"");
+                    + IMAGE_REPOSITORY_DIR + "\"");
         } catch (Exception e) {
             LOGGER.error("Failed to read image repository location.", e);
         }
@@ -49,14 +48,14 @@ public class ImageProvider {
 
     public static String getMuseumAvatarUrl(String img) {
         return isMuseumAvatarImage(img)
-                ? SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_AVATAR_DIR + img
+                ? IMAGE_URL_PREFIX + MUSEUM_AVATAR_DIR + img
                 : DEFAULT_MUSEUM_AVATAR;
     }
 
     public static String getMuseumImageUrl(String img) {
         String url = "";
         if (isMuseumImage(img)) {
-            url = SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_IMAGES_DIR + img;
+            url = IMAGE_URL_PREFIX + MUSEUM_IMAGES_DIR + img;
         }
         return url;
     }
@@ -65,7 +64,7 @@ public class ImageProvider {
         if (imgName == null) {
             return false;
         }
-        File imgFile = new File(SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_AVATAR_DIR + imgName);
+        File imgFile = new File(IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
@@ -73,24 +72,51 @@ public class ImageProvider {
         if (imgName == null) {
             return false;
         }
-        File imgFile = new File(SERVER_APP_PREFIX + IMAGES_DIR + MUSEUM_IMAGES_DIR + imgName);
+        File imgFile = new File(IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR + imgName);
         return imgFile.exists() && imgFile.isFile();
     }
 
     public static String saveMuseumAvatarBase64AndGetName(String base64Image) {
-        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR);
+        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR);
     }
 
     public static String saveMuseumImageBase64AndGetName(String base64Image) {
-        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR);
+        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR);
     }
 
     public static boolean deleteMuseumAvatar(String img) {
-        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_AVATAR_DIR + img);
+        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR + img);
     }
 
     public static boolean deleteMuseumImage(String img) {
-        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + IMAGES_DIR + MUSEUM_IMAGES_DIR + img);
+        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR + img);
+    }
+
+    public static byte[] getImageByPath(String path) throws IOException {
+        ByteArrayOutputStream out = null;
+        InputStream input = null;
+        try{
+            out = new ByteArrayOutputStream();
+            input = new BufferedInputStream(new FileInputStream(IMAGE_REPOSITORY_DIR + path));
+            int data;
+            while ((data = input.read()) != -1){
+                out.write(data);
+            }
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Image not found: ");
+            return null;
+        } catch (IOException e) {
+            LOGGER.error("Failed to load image: ", e);
+            return null;
+        } finally {
+            if (null != input){
+                input.close();
+            }
+            if (null != out){
+                out.close();
+            }
+        }
+        return out.toByteArray();
     }
 
     private static boolean deleteImage(String path) {
