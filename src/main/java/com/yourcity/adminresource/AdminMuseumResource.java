@@ -134,7 +134,7 @@ public class AdminMuseumResource {
     }
 
     @GET
-    @Path("museum/id")
+    @Path("museum/find/id")
     public Response findById(@QueryParam("id") Integer id) {
         if (isValidId(id)) {
             JsonArray array = museumEJB.findById(id);
@@ -147,20 +147,48 @@ public class AdminMuseumResource {
     }
 
     @GET
-    @Path("museum")
-    public Response find(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name) {
-        JsonArray array;
-        if (isValidId(cityId)) {
-            if (isValidString(name)) {
-                array = museumEJB.findByNameAndCityId(name, cityId);
-            } else {
-                array = museumEJB.findByCityId(cityId);
-            }
-        } else if (isValidString(name)) {
-            array = museumEJB.findByName(name);
-        } else {
-            array = museumEJB.findAll();
+    @Path("museum/find/name/cityid")
+    public Response findByNameAndCityId(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name) {
+        if (!isValidId(cityId) || !isValidString(name)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
+        JsonArray array = museumEJB.findByNameAndCityId(name, cityId);
+        if (array == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(array.toString()).build();
+    }
+
+    @GET
+    @Path("museum/find/cityid")
+    public Response findByCityId(@QueryParam("cityId") Integer cityId) {
+        if (!isValidId(cityId)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        JsonArray array = museumEJB.findByCityId(cityId);
+        if (array == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(array.toString()).build();
+    }
+
+    @GET
+    @Path("museum/find/name")
+    public Response findByName(@QueryParam("name") String name) {
+        if (!isValidString(name)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        JsonArray array = museumEJB.findByName(name);
+        if (array == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(array.toString()).build();
+    }
+
+    @GET
+    @Path("museum/find/all")
+    public Response findAll() {
+        JsonArray array = museumEJB.findAll();
         if (array == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

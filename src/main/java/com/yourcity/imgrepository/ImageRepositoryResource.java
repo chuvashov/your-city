@@ -17,7 +17,7 @@ public class ImageRepositoryResource {
 
     @GET
     @Path("images-repository")
-    @Produces("text/image")
+    @Produces({"image/png", "image/jpeg"})
     public Response getImage(@QueryParam("path") String path) {
         if (path == null || path.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();

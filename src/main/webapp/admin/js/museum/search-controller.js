@@ -57,16 +57,28 @@ angular.module('museumSearch', [])
 
         $scope.findByNameAndCity = function () {
             var cityId = getCityId($scope.citySearch) || '',
-                name = $scope.museumNameSearch || '';
+                name = $scope.museumNameSearch || '',
+                request;
             $scope.hasError = false;
-            $http.get('/your-city/rest/admin/museum?cityId=' + cityId + '&name=' + name)
+            if (cityId) {
+                if (name) {
+                    request = 'name/cityid?name=' + name + '&cityId=' + cityId;
+                } else {
+                    request = 'cityid?cityId=' + cityId;
+                }
+            } else if (name) {
+                request = 'name?name=' + name;
+            } else {
+                request = 'all';
+            }
+            $http.get('/your-city/rest/admin/museum/find/' + request)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };
 
         $scope.findById = function () {
             $scope.hasError = false;
-            $http.get('/your-city/rest/admin/museum/id?id=' + $scope.museumIdSearch)
+            $http.get('/your-city/rest/admin/museum/find/id?id=' + $scope.museumIdSearch)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };

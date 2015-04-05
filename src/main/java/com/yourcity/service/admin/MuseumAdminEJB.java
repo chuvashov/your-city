@@ -147,7 +147,6 @@ public class MuseumAdminEJB {
         if (museums.isEmpty()) {
             return null;
         }
-        databaseProvider.closeConnection();
         return convertMuseumListToJsonArray(museums);
     }
 
@@ -157,7 +156,6 @@ public class MuseumAdminEJB {
         if (museums.isEmpty()) {
             return null;
         }
-        databaseProvider.closeConnection();
         return convertMuseumListToJsonArray(museums);
     }
 
@@ -167,7 +165,6 @@ public class MuseumAdminEJB {
         if (museums.isEmpty()) {
             return null;
         }
-        databaseProvider.closeConnection();
         return convertMuseumListToJsonArray(museums);
     }
 
@@ -177,7 +174,6 @@ public class MuseumAdminEJB {
         if (museums.isEmpty()) {
             return null;
         }
-        databaseProvider.closeConnection();
         return convertMuseumListToJsonArray(museums);
     }
 

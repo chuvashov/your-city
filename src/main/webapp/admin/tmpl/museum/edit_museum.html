@@ -5,7 +5,7 @@
             <div ng-show="hasError" class="alert alert-danger">Error: cannot save</div>
             <div ng-show="deleteError" class="alert alert-danger">Error: cannot delete</div>
             <div ng-show="deleted" class="alert alert-success">Museum was successfully deleted</div>
-            <div ng-show="created" class="alert alert-success">Created</div>
+            <div ng-show="created" class="alert alert-success">Saved</div>
             <div class="btn-group item-offset" style="margin-left: 1%">
                 <button type="submit" class="btn btn-success" ng-disabled="form.$invalid || progressBar" ng-click="save()">Save</button>
                 <button type="button" class="btn btn-default" ng-click="setOriginalMuseum()">Back to original</button>
