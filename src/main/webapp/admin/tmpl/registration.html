@@ -1,0 +1,81 @@
+<div class="view-content">
+    <form name="form" novalidate enctype="multipart/form-data">
+        <div class="row">
+            <div ng-show="error" class="alert alert-danger">Error</div>
+            <div ng-show="badLogin" class="alert alert-danger">Error: User with the login exists.</div>
+            <div ng-show="errorPassword" class="alert alert-danger">Error: passwords are different</div>
+            <div ng-show="deleteError" class="alert alert-danger">Error: cannot delete</div>
+            <div ng-show="created" class="alert alert-success">Created</div>
+        </div>
+        <div class="item-offset"></div>
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Name -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Name</span>
+                    <input type="text" name="userName" required ng-pattern="/^[0-9a-zA-ZА-Яа-яЁё\s\-\,\.\+!;\?\(\)]*$/"
+                           class="form-control" ng-model="user.name">
+                </div>
+                <div ng-show="form.userName.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div ng-show="form.userName.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Login -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Login</span>
+                    <input type="text" name="userLogin" ng-pattern="/^[0-9a-zA-Z\-]*$/" required
+                           class="form-control" ng-model="user.login">
+                </div>
+                <div ng-show="form.userLogin.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div ng-show="form.userLogin.$error.pattern">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Password -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Password</span>
+                    <input type="password" name="userPassword" class="form-control" ng-pattern="/^[0-9a-zA-Z\-\,\.\+!;\?\(\)]*$/" required ng-model="user.password">
+                </div>
+                <div ng-show="form.userPassword.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div ng-show="form.userPassword.$error.pattern">
+                    <span class="error-message">Incorrect password</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Password duplicate -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Password</span>
+                    <input type="password" name="userPasswordDuplicate" class="form-control" ng-pattern="/^[0-9a-zA-Z\-\,\.\+!;\?\(\)]*$/" required ng-model="user.passwordDuplicate">
+                </div>
+                <div ng-show="form.userPasswordDuplicate.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div ng-show="form.userPasswordDuplicate.$error.pattern">
+                    <span class="error-message">Incorrect password</span>
+                </div>
+                <div class="item-offset"></div>
+                <!-- Email -->
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">Email</span>
+                    <input type="email" name="userEmail"  class="form-control" required ng-model="user.email">
+                </div>
+                <div ng-show="form.userEmail.$error.required">
+                    <span class="error-message">Required</span>
+                </div>
+                <div ng-show="form.userEmail.$error.email">
+                    <span class="error-message">Incorrect email</span>
+                </div>
+                <div class="item-offset"></div>
+                <div class="btn-group item-offset">
+                    <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid" ng-click="save()">Register</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

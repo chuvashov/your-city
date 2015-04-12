@@ -2,9 +2,6 @@ package com.yourcity.adminresource;
 
 import com.google.gson.JsonArray;
 import com.yourcity.service.admin.CityAdminEJB;
-import com.yourcity.service.model.City;
-import com.yourcity.service.util.CityUtil;
-import com.yourcity.service.util.JsonUtil;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;

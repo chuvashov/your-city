@@ -1,65 +1,126 @@
 package com.yourcity.authentification;
 
+import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.picketlink.Identity;
 import org.picketlink.credential.DefaultLoginCredentials;
+import org.picketlink.idm.IdentityManager;
+import org.picketlink.idm.RelationshipManager;
 import org.picketlink.idm.model.Account;
+import org.picketlink.idm.model.basic.Grant;
+import org.picketlink.idm.model.basic.Role;
+import org.picketlink.idm.query.RelationshipQuery;
 
+import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Andrey on 05.04.2015.
+ * Created by Andrey on 06.04.2015.
  */
-@Path("auth")
+@Path("/")
 public class AuthService {
-
-    public static final String USERNAME_PASSWORD_CREDENTIAL_CONTENT_TYPE = "application/x-authc-username-password+json";
-    public static final String TOKEN_CONTENT_CREDENTIAL_TYPE = "application/x-authc-token";
 
     @Inject
     private Identity identity;
 
     @Inject
+    private IdentityManager identityManager;
+
+    @Inject
+    private RelationshipManager relationshipManager;
+
+    @Inject
     private DefaultLoginCredentials credentials;
 
+    @EJB
+    private SecurityEJB securityEJB;
+
     @POST
-    @Consumes({USERNAME_PASSWORD_CREDENTIAL_CONTENT_TYPE})
+    @Path("signout")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response l(String s) {
+        if (this.identity.isLoggedIn()) {
+            //session.invalidate();
+            this.identity.logout();
+        }
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/authenticate")
+    @Produces("application/json")
     public Response authenticate(DefaultLoginCredentials credential) {
         if (!this.identity.isLoggedIn()) {
-            this.credentials.setUserId(credential.getUserId());
-            this.credentials.setPassword(credential.getPassword());
-            this.identity.login();
+            try {
+                securityEJB.login(credential);
+                this.credentials.setUserId(credential.getUserId());
+                this.credentials.setPassword(credential.getPassword());
+                this.identity.login();
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
-        Account account = this.identity.getAccount();
+        if (this.identity.isLoggedIn()) {
+            Account account = this.identity.getAccount();
+            List<Role> roles = getUserRoles(account);
 
-        return Response.ok().entity(account).type(MediaType.APPLICATION_JSON_TYPE).build();
-    }
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse(account, roles);
 
-    @POST
-    @Consumes({TOKEN_CONTENT_CREDENTIAL_TYPE})
-    public Response authenticate(String token) {
-        if (!this.identity.isLoggedIn()) {
-            TokenCredential credential = new TokenCredential(token);
-
-            this.credentials.setCredential(credential);
-
-            this.identity.login();
+            return Response.ok().entity(authenticationResponse).build();
         }
 
-        Account account = this.identity.getAccount();
-
-        return Response.ok().entity(account).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid credential").build();
     }
 
-    @POST
-    @Consumes({"*/*"})
-    public Response unsupportedCredentialType() {
-        return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
+    private List<Role> getUserRoles(Account account) {
+        RelationshipQuery<Grant> query = this.relationshipManager.createRelationshipQuery(Grant.class);
+
+        query.setParameter(Grant.ASSIGNEE, account);
+
+        List<Role> roles = new ArrayList<>();
+
+        for (Grant grant: query.getResultList()) {
+            roles.add(grant.getRole());
+        }
+
+        return roles;
     }
 
+    private class AuthenticationResponse implements Serializable {
+
+        private static final long serialVersionUID = 1297387771821869087L;
+
+        private Account account;
+        private List<Role> roles;
+
+        public AuthenticationResponse(Account account, List<Role> roles) {
+            this.account = account;
+            this.roles = roles;
+        }
+
+        public Account getAccount() {
+            return this.account;
+        }
+
+        public List<Role> getRoles() {
+            return this.roles;
+        }
+    }
+
+    /*
+
+    public void logout(Identity identity) {
+        identityManager.remove(identity.getAccount());
+        identity.logout();
+    }*/
 }

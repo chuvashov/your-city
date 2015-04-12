@@ -4,19 +4,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonArray;
 import com.yourcity.service.admin.MuseumAdminEJB;
-import com.yourcity.service.model.Museum;
-import com.yourcity.service.model.MuseumImage;
-import com.yourcity.service.ImageProvider;
 import com.yourcity.service.util.CityUtil;
-import com.yourcity.service.util.JsonUtil;
 import com.yourcity.service.util.ConversionFromJsonException;
+import org.picketlink.authorization.annotations.LoggedIn;
+import org.picketlink.authorization.annotations.RolesAllowed;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
-import static java.lang.String.format;
+import static com.yourcity.authentification.YourCityApplicationRole.ADMINISTRATOR;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -185,6 +182,7 @@ public class AdminMuseumResource {
         return Response.ok(array.toString()).build();
     }
 
+    @RolesAllowed({ADMINISTRATOR})
     @GET
     @Path("museum/find/all")
     public Response findAll() {

@@ -1,17 +1,18 @@
 package com.yourcity.resource;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.yourcity.service.CityEJB;
-import com.yourcity.service.model.City;
-import com.yourcity.service.util.CityUtil;
+import org.picketlink.authorization.annotations.LoggedIn;
+import org.picketlink.authorization.annotations.RolesAllowed;
+import org.picketlink.credential.DefaultLoginCredentials;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
+
+import static com.yourcity.authentification.YourCityApplicationRole.ADMINISTRATOR;
 
 /**
  * Created by Andrey on 22.02.2015.

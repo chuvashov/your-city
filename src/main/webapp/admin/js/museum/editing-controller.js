@@ -10,7 +10,7 @@ angular.module('museumEditing', [])
             } else {
                 $scope.museum = {};
                 $scope.museumOriginal = {};
-                $http.get('/your-city/rest/admin/museum/id?id=' + $routeParams.museumId)
+                $http.get('/your-city/rest/admin/museum/find/id?id=' + $routeParams.museumId)
                     .success(function (data) {
                         $scope.museum = angular.copy(data[0]);
                         $scope.museumOriginal = data[0];

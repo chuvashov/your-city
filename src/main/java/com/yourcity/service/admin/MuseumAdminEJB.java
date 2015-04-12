@@ -11,8 +11,6 @@ import com.yourcity.service.util.JsonUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.json.Json;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -131,10 +129,11 @@ public class MuseumAdminEJB {
 
     public JsonArray findById(Integer id) {
         databaseProvider.openConnection();
-        Museum museum = Museum.findById(id);
-        if (museum == null) {
+        List<Museum> museums = Museum.where("id = ?", id);
+        if (museums.isEmpty()) {
             return null;
         }
+        Museum museum = museums.get(0);
         JsonArray array = new JsonArray();
         array.add(JsonUtil.museumToJson(museum));
         databaseProvider.closeConnection();

@@ -3,19 +3,10 @@ package com.yourcity.resource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.yourcity.service.MuseumEJB;
-import com.yourcity.service.model.City;
-import com.yourcity.service.model.Museum;
-import com.yourcity.service.model.MuseumImage;
-import com.yourcity.service.ImageProvider;
-import com.yourcity.service.util.CityUtil;
 
 import javax.ejb.EJB;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Created by Andrey on 22.02.2015.
@@ -67,7 +58,7 @@ public class MuseumResource {
     }
 
     @GET
-    @Path("images")
+    @Path("/images")
     public Response getImages(@QueryParam("id") int museumId) {
         if (museumId < 0) {
             return Response.status(Response.Status.BAD_REQUEST).build();

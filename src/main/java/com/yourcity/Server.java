@@ -1,17 +1,16 @@
 package com.yourcity;
 
-import com.yourcity.mainpage.IndexResource;
-import com.yourcity.resource.CityResource;
-
-import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.FeatureContext;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by Andrey on 03.04.2015.
  */
-public class Server extends Application {
+public class Server {
 
     private Set<Object> singletons = new HashSet<Object>();
     private Set<Class<?>> empty = new HashSet<Class<?>>();
@@ -19,7 +18,7 @@ public class Server extends Application {
     public Server() {
     }
 
-    @Override
+    /*@Override
     public Set<Class<?>> getClasses() {
         return empty;
     }
@@ -27,5 +26,6 @@ public class Server extends Application {
     @Override
     public Set<Object> getSingletons() {
         return singletons;
-    }
+    }*/
+
 }

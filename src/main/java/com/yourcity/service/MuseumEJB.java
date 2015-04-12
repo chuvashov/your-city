@@ -9,7 +9,6 @@ import com.yourcity.service.util.CityUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**

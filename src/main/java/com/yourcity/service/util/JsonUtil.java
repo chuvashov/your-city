@@ -5,6 +5,7 @@ import com.yourcity.service.model.City;
 import com.yourcity.service.model.Museum;
 import com.yourcity.service.model.MuseumImage;
 import com.yourcity.service.ImageProvider;
+import com.yourcity.service.model.User;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -118,6 +119,33 @@ public class JsonUtil {
                 if (imageName != null) {
                     museumImage.setSrc(imageName);
                 }
+            }
+        } catch (Exception e) {
+            throw new ConversionFromJsonException();
+        }
+    }
+
+    public static void jsonToUser(JsonObject userJson, User user)
+            throws ConversionFromJsonException{
+        try {
+            String name = getStringFromJson(userJson, "name");
+            if (isValidString(name)) {
+                user.setName(name);
+            }
+
+            String login = getStringFromJson(userJson, "login");
+            if (isValidString(login)) {
+                user.setLogin(login);
+            }
+
+            String password = getStringFromJson(userJson, "password");
+            if (isValidString(password)) {
+                user.setPassword(password);
+            }
+
+            String email = getStringFromJson(userJson, "email");
+            if (isValidString(email)) {
+                user.setEmail(email);
             }
         } catch (Exception e) {
             throw new ConversionFromJsonException();

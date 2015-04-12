@@ -35,6 +35,7 @@ angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumVie
             var path = $location.path();
             if (path.substring(0, 9) == '/museums') {
                 $location.path('museums');
+                $rootScope.$broadcast('cityWasChanged');
             } else {
                 $rootScope.$broadcast('cityWasChanged');
                 //other

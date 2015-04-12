@@ -1,17 +1,32 @@
 /**
  * Created by Andrey on 08.03.2015.
  */
-angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEditing', 'museumImages'])
-    .controller('mainAdminCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope) {
+angular.module('adminApp', ['ngRoute', 'ngCookies', 'museumSearch', 'museumAdding', 'museumEditing', 'museumImages',
+        'registration'])
+    .controller('mainAdminCtrl', ['$scope', '$http', '$rootScope', '$cookies', function ($scope, $http, $rootScope, $cookies) {
+
+        $scope.logout = function () {
+            //$cookies.JSESSIONID = null;
+            $http.post('/rest/admin/logout1', angular.toJson({}), {headers: {'Content-Type': 'application/json'}})
+                .success(function () {
+
+                });
+            $http.post('/signout', angular.toJson({}), {headers: {'Content-Type': 'application/json'}})
+                .success(function () {
+
+                });
+        };
+
         $scope.cities = [];
         $scope.tryToGetCities = function () {
             $http.get('/your-city/rest/admin/city/all')
                 .success(function (data) {
                     $scope.cities = data;
                     $rootScope.$broadcast('citiesLoaded');
+                    $scope.authenticated = true;
                 })
                 .error(function () {
-                    alert('Couldn\'t load cities!');
+                    document.location.href = 'login.html';
                 });
         };
         $scope.tryToGetCities();
@@ -34,6 +49,10 @@ angular.module('adminApp', ['ngRoute', 'museumSearch', 'museumAdding', 'museumEd
             })
             .when('/', {
                 template: 'admin registration'
+            })
+            .when('/registration', {
+                templateUrl: '/your-city/admin/tmpl/registration.html',
+                controller: 'registrationCtrl'
             })
             .when('/museums', {
                 templateUrl: '/your-city/admin/tmpl/museum/admin_museums.html',
