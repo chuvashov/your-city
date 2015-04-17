@@ -19,10 +19,12 @@ public class ImageProvider {
     private static String IMAGE_REPOSITORY_DIR;
     private static final String MUSEUM_AVATAR_DIR = "/museum/avatars/";
     private static final String MUSEUM_IMAGES_DIR = "/museum/images/";
+    private static final String EVENT_IMAGES_DIR = "/event/images/";
 
     //defaults
     private static final String IMAGE_URL_PREFIX = "/your-city/images-repository?path=";
     private static final String DEFAULT_MUSEUM_AVATAR = "/your-city/application/images/default_museum_avatar.png";
+    private static final String DEFAULT_EVENT_IMAGE = "/your-city/application/images/default_event_image.png";
 
     static {
         Properties properties = new Properties();
@@ -57,6 +59,12 @@ public class ImageProvider {
         return url;
     }
 
+    public static String getEventImageUrl(String img) {
+        return isEventImage(img)
+                ? IMAGE_URL_PREFIX + EVENT_IMAGES_DIR + img
+                : DEFAULT_EVENT_IMAGE;
+    }
+
     public static boolean isMuseumAvatarImage(String imgName) {
         if (imgName == null) {
             return false;
@@ -73,6 +81,14 @@ public class ImageProvider {
         return imgFile.exists() && imgFile.isFile();
     }
 
+    public static boolean isEventImage(String imgName) {
+        if (imgName == null) {
+            return false;
+        }
+        File imgFile = new File(IMAGE_REPOSITORY_DIR + EVENT_IMAGES_DIR + imgName);
+        return imgFile.exists() && imgFile.isFile();
+    }
+
     public static String saveMuseumAvatarBase64AndGetName(String base64Image) {
         return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR);
     }
@@ -81,12 +97,20 @@ public class ImageProvider {
         return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR);
     }
 
+    public static String saveEventImageBase64AndGetName(String base64Image) {
+        return saveImageAndReturnName(base64Image, IMAGE_REPOSITORY_DIR + EVENT_IMAGES_DIR);
+    }
+
     public static boolean deleteMuseumAvatar(String img) {
         return img != null && deleteImage(IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR + img);
     }
 
     public static boolean deleteMuseumImage(String img) {
         return img != null && deleteImage(IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR + img);
+    }
+
+    public static boolean deleteEventImage(String img) {
+        return img != null && deleteImage(IMAGE_REPOSITORY_DIR + EVENT_IMAGES_DIR + img);
     }
 
     public static byte[] getImageByPath(String path) throws IOException {

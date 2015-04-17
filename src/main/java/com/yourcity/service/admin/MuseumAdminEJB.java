@@ -27,7 +27,6 @@ public class MuseumAdminEJB {
     public boolean addNewMuseum(Integer cityId, String name, String description, String email, String about,
                                 String phone, String address, String imageBase64) throws Exception {
         databaseProvider.openConnection();
-        boolean result;
         Museum museum = new Museum();
         museum.setCityId(cityId);
         museum.setName(name);
@@ -42,9 +41,7 @@ public class MuseumAdminEJB {
                 museum.setImage(imageName);
             }
         }
-        result = museum.saveIt();
-        databaseProvider.closeConnection();
-        return result;
+        return museum.saveIt();
     }
 
     public boolean delete(Integer id) {
@@ -64,7 +61,6 @@ public class MuseumAdminEJB {
         }
         ;
         MuseumImage.delete("museum_id = ?", id);
-        databaseProvider.closeConnection();
         return result;
     }
 
@@ -76,16 +72,12 @@ public class MuseumAdminEJB {
         }
         Museum museum = museums.get(0);
         JsonUtil.jsonToMuseum(jsonMuseum, museum);
-        boolean result = museum.saveIt();
-        databaseProvider.closeConnection();
-        return result;
+        return museum.saveIt();
     }
 
     public int deleteMuseumImages(Integer id) {
         databaseProvider.openConnection();
-        int count = MuseumImage.delete("id = ?", id);
-        databaseProvider.closeConnection();
-        return count;
+        return MuseumImage.delete("id = ?", id);
     }
 
     public JsonArray updateOrCreateMuseumImage(JsonObject jsonMuseumImage, Integer id) throws ConversionFromJsonException {
@@ -106,7 +98,6 @@ public class MuseumAdminEJB {
         if (museumImage.saveIt()) {
             JsonArray array = new JsonArray();
             array.add(JsonUtil.museumImageToJson(museumImage));
-            databaseProvider.closeConnection();
             return array;
         } else {
             return null;
@@ -123,7 +114,6 @@ public class MuseumAdminEJB {
         for (MuseumImage museumImage : museumImages) {
             array.add(JsonUtil.museumImageToJson(museumImage));
         }
-        databaseProvider.closeConnection();
         return array;
     }
 
@@ -136,7 +126,6 @@ public class MuseumAdminEJB {
         Museum museum = museums.get(0);
         JsonArray array = new JsonArray();
         array.add(JsonUtil.museumToJson(museum));
-        databaseProvider.closeConnection();
         return array;
     }
 

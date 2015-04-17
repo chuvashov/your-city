@@ -68,8 +68,6 @@ public class SecurityEJB {
             identityManager.remove(picketLinkUser);
             throw new IncorrectPasswordException();
         }*/
-
-        databaseProvider.closeConnection();
     }
 
     public boolean registerUser(JsonObject userObj) throws UserWithLoginExistsException {
@@ -85,16 +83,11 @@ public class SecurityEJB {
             LOGGER.error("Couldn't convert user from json.", e);
             return false;
         }
-        databaseProvider.openConnection();
-        boolean result = user.saveIt();
-        databaseProvider.closeConnection();
-        return result;
+        return user.saveIt();
     }
 
     public boolean hasLogin(String login) {
         databaseProvider.openConnection();
-        Long count = User.count("login = ?", login);
-        databaseProvider.closeConnection();
-        return count > 0;
+        return User.count("login = ?", login) > 0;
     }
 }

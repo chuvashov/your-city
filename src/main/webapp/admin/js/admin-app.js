@@ -2,7 +2,7 @@
  * Created by Andrey on 08.03.2015.
  */
 angular.module('adminApp', ['ngRoute', 'ngCookies', 'museumSearch', 'museumAdding', 'museumEditing', 'museumImages',
-        'registration'])
+        'registration', 'eventSearch'])
     .controller('mainAdminCtrl', ['$scope', '$http', '$rootScope', '$cookies', function ($scope, $http, $rootScope, $cookies) {
 
         $scope.logout = function () {
@@ -30,6 +30,21 @@ angular.module('adminApp', ['ngRoute', 'ngCookies', 'museumSearch', 'museumAddin
                 });
         };
         $scope.tryToGetCities();
+
+        $scope.eventTypes = [];
+        $scope.tryToGetEventTypes = function () {
+            $http.get('/your-city/rest/admin/event/types')
+                .success(function (data) {
+                    $scope.eventTypes = [];
+                    $.each(data, function (j, event) {
+                        $scope.eventTypes.push(event['eventType']);
+                    });
+                })
+                .error(function () {
+                    document.location.href = 'login.html';
+                });
+        };
+        $scope.tryToGetEventTypes();
 
         $scope.defaultMuseumAvatar = '/your-city/application/images/default_museum_avatar.png';
         $scope.waitProgress = '/your-city/application/images/wait_progress.gif';
@@ -69,6 +84,10 @@ angular.module('adminApp', ['ngRoute', 'ngCookies', 'museumSearch', 'museumAddin
             .when('/museums/:museumId/images', {
                 templateUrl: '/your-city/admin/tmpl/museum/images_museum.html',
                 controller: 'museumImagesCtrl'
+            })
+            .when('/events/:eventType', {
+                templateUrl: '/your-city/admin/tmpl/event/admin_events.html',
+                controller: 'eventCtrl'
             })
             .otherwise({
                 redirectTo: ''

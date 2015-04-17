@@ -182,7 +182,6 @@ public class AdminMuseumResource {
         return Response.ok(array.toString()).build();
     }
 
-    @RolesAllowed({ADMINISTRATOR})
     @GET
     @Path("museum/find/all")
     public Response findAll() {

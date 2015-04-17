@@ -1,15 +1,43 @@
 package com.yourcity.service.model;
 
 import org.javalite.activejdbc.Model;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Andrey on 12.04.2015.
  */
 public class Event extends Model {
+
+    public enum EventType {
+        CONCERT;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case CONCERT: return "concert";
+                default: throw new IllegalArgumentException();
+            }
+        }
+
+        public static EventType getEventType(String type) {
+            switch (type.toLowerCase()) {
+                case "concert": return EventType.CONCERT;
+                default: throw new IllegalArgumentException();
+            }
+        }
+
+        public static List<String> getTypes() {
+            List<String> types = new ArrayList<>();
+            types.add("concert");
+            return types;
+        }
+    }
 
     public Integer getEventId() {
         return getInteger("id");
@@ -47,35 +75,35 @@ public class Event extends Model {
         return getString("about");
     }
 
-    public void setEventType(@NotNull String type) {
-        setString("event_type", type);
+    public void setEventType(@NotNull EventType type) {
+        setString("event_type", type.toString());
     }
 
-    public String getEventType() {
-        return getString("event_type");
+    public EventType getEventType() {
+        return EventType.getEventType(getString("event_type"));
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime(String startTime) {
         set("start_time", startTime);
     }
 
-    public Timestamp getStartTime() {
-        return getTimestamp("start_time");
+    public String getStartTime() {
+        return getString("start_time");
     }
 
-    public void setFinishTime(Timestamp finishTime) {
+    public void setFinishTime(String finishTime) {
         set("start_time", finishTime);
     }
 
-    public Timestamp getFinishTime() {
-        return getTimestamp("finish_time");
+    public String getFinishTime() {
+        return getString("finish_time");
     }
 
-    public void setTimeType(String timeType) {
-        set("time_type", timeType);
+    public void setName(@NotNull String name) {
+        setString("name", name);
     }
 
-    public String getTimeType() {
-        return getString("time_type");
+    public String getName() {
+        return getString("name");
     }
 }

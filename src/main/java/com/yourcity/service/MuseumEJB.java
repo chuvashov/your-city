@@ -34,7 +34,6 @@ public class MuseumEJB {
         jsonObj.addProperty("phone", museum.getPhone());
         jsonObj.addProperty("address", museum.getAddress());
         jsonObj.addProperty("about", museum.getAbout());
-        databaseProvider.closeConnection();
         return jsonObj;
     }
 
@@ -55,7 +54,6 @@ public class MuseumEJB {
             jsonObj.addProperty("id", museum.getMuseumId());
             array.add(jsonObj);
         }
-        databaseProvider.closeConnection();
         return array;
     }
 
@@ -74,7 +72,6 @@ public class MuseumEJB {
         jsonObj.addProperty("address", museum.getAddress());
         jsonObj.addProperty("about", museum.getAbout());
         jsonObj.addProperty("image", ImageProvider.getMuseumAvatarUrl(museum.getImage()));
-        databaseProvider.closeConnection();
         return jsonObj;
     }
 
@@ -96,7 +93,6 @@ public class MuseumEJB {
             jsonObj.addProperty("src", ImageProvider.getMuseumImageUrl(src));
             array.add(jsonObj);
         }
-        databaseProvider.closeConnection();
         return array;
     }
 }

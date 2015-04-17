@@ -28,7 +28,6 @@ public class CityEJB {
             jsonObj.addProperty("city", city.getCityName());
             jsonArray.add(jsonObj);
         }
-        databaseProvider.closeConnection();
         return jsonArray;
     }
 }

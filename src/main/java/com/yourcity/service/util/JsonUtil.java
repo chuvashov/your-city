@@ -1,11 +1,10 @@
 package com.yourcity.service.util;
 
 import com.google.gson.JsonObject;
-import com.yourcity.service.model.City;
-import com.yourcity.service.model.Museum;
-import com.yourcity.service.model.MuseumImage;
+import com.yourcity.service.model.*;
 import com.yourcity.service.ImageProvider;
-import com.yourcity.service.model.User;
+
+import java.sql.Date;
 
 /**
  * Created by Andrey on 08.03.2015.
@@ -39,6 +38,20 @@ public class JsonUtil {
         jsonObj.addProperty("description", imageObject.getDescription());
         jsonObj.addProperty("src", ImageProvider.getMuseumImageUrl(imageObject.getSrc()));
         jsonObj.addProperty("museumId", imageObject.getMuseumId());
+        return jsonObj;
+    }
+
+    public static JsonObject eventToJson(Event eventObject) {
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("id", eventObject.getEventId());
+        jsonObj.addProperty("cityId", eventObject.getCityId());
+        jsonObj.addProperty("name", eventObject.getName());
+        jsonObj.addProperty("description", eventObject.getDescription());
+        jsonObj.addProperty("image", eventObject.getImage());
+        jsonObj.addProperty("about", eventObject.getAbout());
+        jsonObj.addProperty("eventType", eventObject.getEventType().toString());
+        jsonObj.addProperty("startTime", eventObject.getStartTime());
+        jsonObj.addProperty("finishTime", eventObject.getFinishTime());
         return jsonObj;
     }
 
@@ -146,6 +159,51 @@ public class JsonUtil {
             String email = getStringFromJson(userJson, "email");
             if (isValidString(email)) {
                 user.setEmail(email);
+            }
+        } catch (Exception e) {
+            throw new ConversionFromJsonException();
+        }
+    }
+
+    public static void jsonToEvent(JsonObject eventJson, Event event)
+            throws ConversionFromJsonException{
+        try {
+            String name = getStringFromJson(eventJson, "name");
+            if (isValidString(name)) {
+                event.setName(name);
+            }
+
+            String description = getStringFromJson(eventJson, "description");
+            if (isValidString(description)) {
+                event.setDescription(description);
+            }
+
+            String about = getStringFromJson(eventJson, "about");
+            if (isValidString(about)) {
+                event.setAbout(about);
+            }
+
+            String image = getStringFromJson(eventJson, "image");
+            if (isValidString(image)) {
+                String imageName = ImageProvider.saveEventImageBase64AndGetName(image);
+                if (imageName != null) {
+                    event.setImage(imageName);
+                }
+            }
+
+            Integer cityId = getIntegerFromJson(eventJson, "cityId");
+            if (isValidId(cityId)) {
+                event.setCityId(cityId);
+            }
+
+            String startTime = getStringFromJson(eventJson, "startTime");
+            if (isValidString(startTime)) {
+                event.setStartTime(startTime);
+            }
+
+            String finishTime = getStringFromJson(eventJson, "finishTime");
+            if (isValidString(finishTime)) {
+                event.setStartTime(finishTime);
             }
         } catch (Exception e) {
             throw new ConversionFromJsonException();

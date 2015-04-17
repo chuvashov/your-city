@@ -24,7 +24,6 @@ public class CityAdminEJB {
         for (City city : CityUtil.getCities()) {
             array.add(JsonUtil.cityToJson(city));
         }
-        databaseProvider.closeConnection();
         return array;
     }
 
@@ -36,7 +35,6 @@ public class CityAdminEJB {
         if (saved) {
             CityUtil.refreshCities();
         }
-        databaseProvider.closeConnection();
         return saved;
     }
 }
