@@ -26,6 +26,7 @@ public class AdminCityResource {
 
     @POST
     @Path("add")
+    @Consumes("application/json")
     public Response addCity(@QueryParam("name") String name) {
         if (!isValidCityName(name)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -35,6 +36,20 @@ public class AdminCityResource {
         } else {
             return Response.serverError().build();
         }
+    }
+
+    @POST
+    @Path("delete")
+    @Consumes("application/json")
+    public Response deleteCity(@QueryParam("id") Integer id) {
+        if (id != null && id > 0) {
+            if (cityEJB.deleteCity(id)) {
+                return Response.ok().build();
+            } else {
+                return Response.serverError().build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     private boolean isValidCityName(String name) {

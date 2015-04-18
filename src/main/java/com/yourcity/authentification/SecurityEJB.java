@@ -6,6 +6,7 @@ import com.yourcity.service.model.User;
 import com.yourcity.service.util.ConversionFromJsonException;
 import com.yourcity.service.util.JsonUtil;
 import org.picketlink.credential.DefaultLoginCredentials;
+import org.picketlink.idm.IdentityManagementException;
 import org.picketlink.idm.IdentityManager;
 import org.picketlink.idm.PartitionManager;
 import org.picketlink.idm.RelationshipManager;
@@ -50,17 +51,22 @@ public class SecurityEJB {
 
         org.picketlink.idm.model.basic.User picketLinkUser = new org.picketlink.idm.model.basic.User(user.getLogin());
         IdentityManager identityManager = this.partitionManager.createIdentityManager();
-        identityManager.add(picketLinkUser);
-        identityManager.updateCredential(picketLinkUser, new Password(user.getPassword()));
+        try {
+            identityManager.add(picketLinkUser);
+            identityManager.updateCredential(picketLinkUser, new Password(user.getPassword()));
 
-        RelationshipManager relationshipManager = this.partitionManager.createRelationshipManager();
+            RelationshipManager relationshipManager = this.partitionManager.createRelationshipManager();
 
-        Role role;
-        for (String roleName: user.getRoles()) {
-            role = new Role(roleName);
-            identityManager.add(role);
-            grantRole(relationshipManager, picketLinkUser, role);
+            Role role;
+            for (String roleName: user.getRoles()) {
+                role = new Role(roleName);
+                identityManager.add(role);
+                grantRole(relationshipManager, picketLinkUser, role);
+            }
+        } catch (IdentityManagementException e) {
+
         }
+
 
         /*Identity.AuthenticationResult result = identity.login();
 

@@ -2,7 +2,8 @@
  * Created by Andrey on 04.04.2015.
  */
 angular.module('museumView', [])
-    .controller('museumViewCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
+    .controller('museumViewCtrl', ['$scope', '$http', '$routeParams', '$location',
+            function ($scope, $http, $routeParams, $location) {
         $scope.museum = {};
         $scope.loading = null;
         $scope.tryToGetMuseumInfo = function () {
@@ -18,4 +19,8 @@ angular.module('museumView', [])
                 });
         };
         $scope.tryToGetMuseumInfo();
+
+        $scope.$on('cityWasChanged', function () {
+            $location.path('museums');
+        });
     }]);

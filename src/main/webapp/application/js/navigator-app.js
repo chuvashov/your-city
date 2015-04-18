@@ -1,12 +1,14 @@
 /**
  * Created by Andrey on 22.02.2015.
  */
-angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumView', 'museumImagesView'])
+angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumView', 'museumImagesView',
+    'mainEvent', 'eventView'])
     .controller('navigatorCtrl', ['$scope', '$http', '$location', '$cookies', '$rootScope',
             function ($scope, $http, $location, $cookies, $rootScope) {
-
+        $scope.eventType = '';
         $scope.cities = [];
-        $scope.curCity = $cookies.city ? $cookies.city : 'Choose city';
+        $scope.defaultCityLabel = 'Choose city';
+        $scope.curCity = $cookies.city ? $cookies.city : $scope.defaultCityLabel;
         $scope.saveCurCity = function (city) {
             $cookies.city = city;
         };
@@ -18,7 +20,7 @@ angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumVie
                     $scope.cities.push(obj['city']);
                 });
                 $scope.cities.sort();
-                if ($scope.cities.length && $scope.curCity == 'Choose city') {
+                if ($scope.cities.length && $scope.curCity == $scope.defaultCityLabel) {
                     $scope.curCity = $scope.cities[0];
                 }
             })
@@ -32,24 +34,17 @@ angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumVie
             }
             $scope.curCity = city;
             $scope.saveCurCity(city);
-            var path = $location.path();
-            if (path.substring(0, 9) == '/museums') {
-                $location.path('museums');
-                $rootScope.$broadcast('cityWasChanged');
-            } else {
-                $rootScope.$broadcast('cityWasChanged');
-                //other
-            }
+            $rootScope.$broadcast('cityWasChanged');
         };
 
     }])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('', {
-                template: 'home page'
+                templateUrl: '/your-city/application/tmpl/homepage.html'
             })
             .when('/', {
-                template: 'home page'
+                templateUrl: '/your-city/application/tmpl/homepage.html'
             })
             .when('/museums', {
                 templateUrl: '/your-city/application/tmpl/museum/museums_view.html',
@@ -62,6 +57,14 @@ angular.module('navigatorApp', ['ngRoute', 'ngCookies', 'mainMuseum', 'museumVie
             .when('/museums/images/:museumId', {
                 templateUrl: '/your-city/application/tmpl/museum/museum_images_view.html',
                 controller: 'museumImagesViewCtrl'
+            })
+            .when('/events/:eventType', {
+                templateUrl: '/your-city/application/tmpl/event/events_view.html',
+                controller: 'mainEventCtrl'
+            })
+            .when('/events/:eventType/view/:eventId', {
+                templateUrl: '/your-city/application/tmpl/event/event_view.html',
+                controller: 'eventViewCtrl'
             })
             .otherwise({
                 redirectTo: ''

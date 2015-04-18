@@ -32,4 +32,8 @@ angular.module('museumImagesView', [])
                 });
         };
         tryToGetImages();
+
+        $scope.$on('cityWasChanged', function () {
+            $location.path('museums');
+        });
     }]);

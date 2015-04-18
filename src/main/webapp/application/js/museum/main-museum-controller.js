@@ -18,6 +18,7 @@ angular.module('mainMuseum', [])
                     $scope.loading = false;
                 })
                 .error(function () {
+                    $scope.museumList = [];
                     $scope.loading = false;
                     $scope.noMuseumsMessage = true;
                 });

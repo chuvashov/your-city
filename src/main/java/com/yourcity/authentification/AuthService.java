@@ -12,8 +12,6 @@ import org.picketlink.idm.query.RelationshipQuery;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -44,12 +42,10 @@ public class AuthService {
     private SecurityEJB securityEJB;
 
     @POST
-    @Path("signout")
+    @Path("logout")
     @Produces("application/json")
-    @Consumes("application/json")
-    public Response l(String s) {
+    public Response lt() {
         if (this.identity.isLoggedIn()) {
-            //session.invalidate();
             this.identity.logout();
         }
         return Response.ok().build();

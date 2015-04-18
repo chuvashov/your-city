@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import com.yourcity.service.model.*;
 import com.yourcity.service.ImageProvider;
 
-import java.sql.Date;
-
 /**
  * Created by Andrey on 08.03.2015.
  */
@@ -47,7 +45,7 @@ public class JsonUtil {
         jsonObj.addProperty("cityId", eventObject.getCityId());
         jsonObj.addProperty("name", eventObject.getName());
         jsonObj.addProperty("description", eventObject.getDescription());
-        jsonObj.addProperty("image", eventObject.getImage());
+        jsonObj.addProperty("image", ImageProvider.getEventImageUrl(eventObject.getImage()));
         jsonObj.addProperty("about", eventObject.getAbout());
         jsonObj.addProperty("eventType", eventObject.getEventType().toString());
         jsonObj.addProperty("startTime", eventObject.getStartTime());

@@ -8,6 +8,7 @@ import com.yourcity.service.util.JsonUtil;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import java.util.List;
 
 /**
  * Created by Andrey on 05.04.2015.
@@ -36,5 +37,19 @@ public class CityAdminEJB {
             CityUtil.refreshCities();
         }
         return saved;
+    }
+
+    public boolean deleteCity(Integer id) {
+        databaseProvider.openConnection();
+        List<City> cities = City.where("id = ?", id);
+        if (cities.isEmpty()) {
+            return false;
+        }
+        if (cities.get(0).delete()) {
+            CityUtil.refreshCities();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -172,7 +172,7 @@
                 <configuration>
                     <hostname>127.0.0.1</hostname>
                     <port>9990</port>
-                    <filename>your-city-artifact.war</filename>
+                    <filename>your-city.war</filename>
                 </configuration>
             </plugin>
             <plugin>

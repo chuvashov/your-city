@@ -9,7 +9,8 @@ angular.module('loginApp', [])
             $scope.error = false;
 
             $scope.tryToLogin = function() {
-                $http.post('/your-city/authenticate', angular.toJson({userId: $scope.login, password: $scope.password}), {headers: {'Content-Type': 'application/json'}})
+                $http.post('/your-city/authenticate', angular.toJson({userId: $scope.login, password: $scope.password}),
+                    {headers: {'Content-Type': 'application/json'}})
                     .success(function () {
                         document.location.href = 'admin.html';
                     })
@@ -17,16 +18,4 @@ angular.module('loginApp', [])
                         $scope.error = true;
                     })
             };
-
-            $scope.logout = function () {
-                /*$http.post('/rest/admin/logout1', angular.toJson({}), {headers: {'Content-Type': 'application/json'}})
-                    .success(function () {
-
-                    });
-                $http.post('/signout', angular.toJson({}), {headers: {'Content-Type': 'application/json'}})
-                    .success(function () {
-
-                    });*/
-            };
-            //$scope.logout();
         }]);

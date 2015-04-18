@@ -1,0 +1,36 @@
+<div class="view-content">
+    <div class="page-header">
+        <h3>city</h3>
+    </div>
+    <div class="row item-offset">
+        <form novalidate name="cityForm">
+            <div class="col-md-8">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">City Name</span>
+                    <input type="text" placeholder="city name" ng-pattern="/^[a-zA-ZА-Яа-яЁё\s\-\,\(\)]+$/"
+                           class="form-control" ng-model="cityName">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default" ng-click="addCity()" ng-disabled="!cityName">
+                                Add
+                            </button>
+                        </span>
+                </div>
+                <div ng-show="cityForm.$invalid">
+                    <span class="error-message">Impossible symbols</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row" style="margin: 5% 10% 10%;">
+        <div ng-show="addingError" class="alert alert-danger">Error: cannot create city</div>
+        <div ng-show="deletingError" class="alert alert-danger">Error: cannot delete city</div>
+        <div ng-show="created" class="alert alert-success">City was created</div>
+        <div class="col-md-8" ng-repeat="city in cities">
+            <div class="thumbnail">
+                <h3>{{city.name}}</h3>
+                <p style="color: #c7254e">ID: {{city.id}}</p>
+                <button ng-click="deleteCity(city.id)" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

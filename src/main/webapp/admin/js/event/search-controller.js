@@ -3,7 +3,7 @@
  */
 angular.module('eventSearch', [])
     .controller('eventCtrl', ['$scope', '$http', '$routeParams', function ($scope, $http, $routeParams) {
-        var eventType = $routeParams.eventType;
+        $scope.eventType = $routeParams.eventType;
         $scope.eventIdSearch = null;
         $scope.eventNameSearch = null;
         $scope.cityList = [];
@@ -72,21 +72,21 @@ angular.module('eventSearch', [])
             } else {
                 request = '/all';
             }
-            $http.get('/your-city/rest/admin/event/find/' + eventType + request)
+            $http.get('/your-city/rest/admin/event/find/' + $scope.eventType + request)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };
 
         $scope.findById = function () {
             $scope.hasError = false;
-            $http.get('/your-city/rest/admin/event/find/' + eventType + '/id?id=' + $scope.eventIdSearch)
+            $http.get('/your-city/rest/admin/event/find/' + $scope.eventType + '/id?id=' + $scope.eventIdSearch)
                 .success(successLoadingAction)
                 .error(errorLoadingAction);
         };
 
         $scope.deleteEvent = function (id) {
             $scope.hasError = false;
-            $http.post('/your-city/rest/admin/event/delete?id=' + id)
+            $http.post('/your-city/rest/admin/event/' + $scope.eventType + '/delete?id=' + id)
                 .success(function () {
                     for (var j = 0; $scope.foundEvents.length; j++) {
                         if ($scope.foundEvents[j].id == id) {

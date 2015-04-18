@@ -1,6 +1,7 @@
 package com.yourcity.service.admin;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.yourcity.service.DatabaseProvider;
 import com.yourcity.service.model.Event;
@@ -18,7 +19,7 @@ import static java.lang.String.format;
  * Created by Andrey on 17.04.2015.
  */
 @Stateless
-public class EventEJB {
+public class EventAdminEJB {
 
     private JsonArray eventTypesJsonArray;
 
@@ -35,14 +36,14 @@ public class EventEJB {
         }
     }
 
-    public JsonArray getAllEventOfType(String type) throws IllegalArgumentException {
+    public JsonArray getAllEventOfType(String type) {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("event_type = '%s'", eventType));
         return convertEventsToJsonArray(events);
     }
 
-    public JsonArray findById(Integer id, String type) throws IllegalArgumentException {
+    public JsonArray findById(Integer id, String type) {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("id = '%s' and event_type = '%s'", id, eventType));
@@ -52,8 +53,7 @@ public class EventEJB {
         return convertEventsToJsonArray(events);
     }
 
-    public JsonArray findByNameAndCityId(Integer cityId, String name, String type)
-            throws IllegalArgumentException {
+    public JsonArray findByNameAndCityId(Integer cityId, String name, String type) {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("event_type = '%s' and city_id = '%s' and name = '%s'",
@@ -61,16 +61,14 @@ public class EventEJB {
         return convertEventsToJsonArray(events);
     }
 
-    public JsonArray findByName(String name, String type)
-            throws IllegalArgumentException {
+    public JsonArray findByName(String name, String type) {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("event_type = '%s' and name = '%s'", eventType, name));
         return convertEventsToJsonArray(events);
     }
 
-    public JsonArray findByCityId(Integer cityId, String type)
-            throws IllegalArgumentException {
+    public JsonArray findByCityId(Integer cityId, String type) {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("event_type = '%s' and city_id = '%s'", eventType, cityId));
@@ -89,6 +87,36 @@ public class EventEJB {
         event.setEventType(eventType);
         try {
             JsonUtil.jsonToEvent(jsonObj, event);
+        } catch (ConversionFromJsonException e) {
+            return false;
+        }
+        return event.saveIt();
+    }
+
+    public boolean deleteEvent(Integer id, String type) {
+        Event.EventType eventType = Event.EventType.getEventType(type);
+        databaseProvider.openConnection();
+        List<Event> events = Event.where(format("event_type = '%s' and id = '%s'", eventType, id));
+        return !events.isEmpty() && events.get(0).delete();
+    }
+
+    public boolean updateEvent(JsonObject eventJsonObj, Integer id, String type) {
+        Event.EventType eventType = Event.EventType.getEventType(type);
+        databaseProvider.openConnection();
+        JsonElement idElem = eventJsonObj.get("id");
+        if (idElem.isJsonNull()) {
+            return false;
+        }
+        if (idElem.getAsInt() != id) {
+            return false;
+        }
+        List<Event> events = Event.where(format("event_type = '%s' and id = '%s'", eventType, id));
+        if (events.isEmpty()) {
+            return false;
+        }
+        Event event = events.get(0);
+        try {
+            JsonUtil.jsonToEvent(eventJsonObj, event);
         } catch (ConversionFromJsonException e) {
             return false;
         }

@@ -3,7 +3,7 @@ package com.yourcity.adminresource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.yourcity.service.admin.EventEJB;
+import com.yourcity.service.admin.EventAdminEJB;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 public class AdminEventResource {
 
     @EJB
-    private EventEJB eventEJB;
+    private EventAdminEJB eventEJB;
 
     @GET
     @Path("types")
@@ -56,13 +56,13 @@ public class AdminEventResource {
     @GET
     @Path("find/{type}/name/cityid")
     public Response findByNameAndCityId(@QueryParam("cityId") Integer cityId, @QueryParam("name") String name,
-            @PathParam("type") String type) {
+                                        @PathParam("type") String type) {
         if (!isValidId(cityId) || !isValidString(name)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         JsonArray array;
         try {
-             array = eventEJB.findByNameAndCityId(cityId, name, type);
+            array = eventEJB.findByNameAndCityId(cityId, name, type);
         } catch (IllegalArgumentException e) {
             return Response.serverError().build();
         }
@@ -115,6 +115,35 @@ public class AdminEventResource {
         JsonParser parser = new JsonParser();
         JsonObject eventJsonObj = (JsonObject) parser.parse(event);
         if (eventEJB.createEvent(eventJsonObj, type)) {
+            return Response.ok().build();
+        } else {
+            return Response.serverError().build();
+        }
+    }
+
+    @POST
+    @Path("{type}/delete")
+    @Consumes("application/json")
+    public Response deleteEvent(@PathParam("type") String type, @QueryParam("id") Integer id) {
+        if (!isValidId(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        if (eventEJB.deleteEvent(id, type)) {
+            return Response.ok().build();
+        }
+        return Response.serverError().build();
+    }
+
+    @POST
+    @Path("{type}/update")
+    @Consumes("application/json")
+    public Response updateEvent(String event, @PathParam("type") String type, @QueryParam("id") Integer id) {
+        if (!isValidId(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        JsonParser parser = new JsonParser();
+        JsonObject eventJsonObj = (JsonObject) parser.parse(event);
+        if (eventEJB.updateEvent(eventJsonObj, id, type)) {
             return Response.ok().build();
         } else {
             return Response.serverError().build();

@@ -1,6 +1,9 @@
 <div class="view-content">
+    <div class="page-header">
+        <h3>{{eventType}}</h3>
+    </div>
     <div class="row item-offset">
-        <a href="#events/add" class="btn btn-default" role="button" style="margin-left: 1%">Create Event</a>
+        <a href="#events/{{eventType}}/create" class="btn btn-default" role="button" style="margin-left: 1%">Create Event</a>
     </div>
     <div class="row item-offset">
         <div>
@@ -50,7 +53,7 @@
                     <p>{{event.description}}</p>
 
                     <p>
-                        <!--a href="#museums/{{museum.id}}/edit" ng-click="saveMuseumInKeeper()" class="btn btn-primary" role="button">Edit</a-->
+                        <a href="#events/{{eventType}}/edit/{{event.id}}" ng-click="saveEventInKeeper()" class="btn btn-primary" role="button">Edit</a>
                         <button ng-click="deleteEvent(event.id)" class="btn btn-danger">Delete</button>
                     </p>
                 </div>
