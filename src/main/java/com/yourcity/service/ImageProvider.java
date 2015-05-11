@@ -38,6 +38,13 @@ public class ImageProvider {
         try {
             IMAGE_REPOSITORY_DIR = properties.getProperty("imageRepository");
 
+            File dir = new File(IMAGE_REPOSITORY_DIR + MUSEUM_AVATAR_DIR);
+            dir.mkdirs();
+            dir = new File(IMAGE_REPOSITORY_DIR + MUSEUM_IMAGES_DIR);
+            dir.mkdirs();
+            dir = new File(IMAGE_REPOSITORY_DIR + EVENT_IMAGES_DIR);
+            dir.mkdirs();
+
             LOGGER.info("Read image repository location from property file. ImageRepositoryLocation = \""
                     + IMAGE_REPOSITORY_DIR + "\"");
         } catch (Exception e) {
@@ -116,6 +123,7 @@ public class ImageProvider {
     public static byte[] getImageByPath(String path) throws IOException {
         ByteArrayOutputStream out = null;
         InputStream input = null;
+        boolean wasException = false;
         try{
             out = new ByteArrayOutputStream();
             input = new BufferedInputStream(new FileInputStream(IMAGE_REPOSITORY_DIR + path));
@@ -125,10 +133,10 @@ public class ImageProvider {
             }
         } catch (FileNotFoundException e) {
             LOGGER.error("Image not found: ");
-            return null;
+            wasException = true;
         } catch (IOException e) {
             LOGGER.error("Failed to load image: ", e);
-            return null;
+            wasException = true;
         } finally {
             if (null != input){
                 input.close();
@@ -136,6 +144,9 @@ public class ImageProvider {
             if (null != out){
                 out.close();
             }
+        }
+        if (wasException) {
+            return null;
         }
         return out.toByteArray();
     }
@@ -146,17 +157,16 @@ public class ImageProvider {
     }
 
     private static String saveImageAndReturnName(String base64Image, String dir) {
-        if (!base64Image.startsWith("data:image/")) {
-            return null;
-        }
         String format;
         String image;
-        if (base64Image.charAt(11) == 'j') {
+        if (base64Image.startsWith("data:image/jpeg;base64,")) {
             format = ".jpg";
             image = base64Image.substring(23);
-        } else {
+        } else if (base64Image.startsWith("data:image/png;base64,")) {
             format = ".png";
             image = base64Image.substring(22);
+        } else {
+            return null;
         }
         byte[] img = Base64.decodeBase64(image);
         String name = UUID.randomUUID().toString() + format;

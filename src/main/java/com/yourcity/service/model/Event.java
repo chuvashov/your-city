@@ -15,26 +15,35 @@ import java.util.List;
 public class Event extends Model {
 
     public enum EventType {
-        CONCERT;
+        CONCERT,
+        EXHIBITION,
+        EVENT,
+        CAFE,
+        CLUB,
+        BAR;
 
         @Override
         public String toString() {
-            switch (this) {
-                case CONCERT: return "concert";
-                default: throw new IllegalArgumentException();
-            }
+            return super.toString().toLowerCase();
         }
 
         public static EventType getEventType(String type) {
             switch (type.toLowerCase()) {
-                case "concert": return EventType.CONCERT;
+                case "concert": return CONCERT;
+                case "exhibition": return EXHIBITION;
+                case "event": return EVENT;
+                case "cafe": return CAFE;
+                case "club": return CLUB;
+                case "bar": return BAR;
                 default: throw new IllegalArgumentException();
             }
         }
 
         public static List<String> getTypes() {
             List<String> types = new ArrayList<>();
-            types.add("concert");
+            for (EventType event : EventType.values()) {
+                types.add(event.toString());
+            }
             return types;
         }
     }

@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.yourcity.service.DatabaseProvider;
+import com.yourcity.service.ImageProvider;
 import com.yourcity.service.model.Event;
 import com.yourcity.service.util.ConversionFromJsonException;
 import com.yourcity.service.util.JsonUtil;
@@ -97,7 +98,12 @@ public class EventAdminEJB {
         Event.EventType eventType = Event.EventType.getEventType(type);
         databaseProvider.openConnection();
         List<Event> events = Event.where(format("event_type = '%s' and id = '%s'", eventType, id));
-        return !events.isEmpty() && events.get(0).delete();
+        if (events.isEmpty()) {
+            return false;
+        }
+        Event event = events.get(0);
+        ImageProvider.deleteEventImage(event.getImage());
+        return event.delete();
     }
 
     public boolean updateEvent(JsonObject eventJsonObj, Integer id, String type) {

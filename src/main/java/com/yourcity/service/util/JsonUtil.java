@@ -218,7 +218,7 @@ public class JsonUtil {
 
     private static Integer getIntegerFromJson(JsonObject jsonObj, String propertyName) {
         Integer result = null;
-        if (!jsonObj.get(propertyName).isJsonNull()) {
+        if (jsonObj != null && jsonObj.get(propertyName) != null && !jsonObj.get(propertyName).isJsonNull()) {
             result = jsonObj.get(propertyName).getAsInt();
         };
         return result;
@@ -226,7 +226,7 @@ public class JsonUtil {
 
     private static String getStringFromJson(JsonObject jsonObj, String propertyName) {
         String result = null;
-        if (!jsonObj.get(propertyName).isJsonNull()) {
+        if (jsonObj != null && jsonObj.get(propertyName) != null && !jsonObj.get(propertyName).isJsonNull()) {
             result = jsonObj.get(propertyName).getAsString();
         };
         return result;
